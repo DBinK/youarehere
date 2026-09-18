@@ -37,7 +37,7 @@ Line and character numbers are **1-based** — use them directly, no conversion 
 
 Use `file` for the path — it's absolute, readable from any working directory. `relativeFile` is the workspace-relative version and is `null` when the user hasn't opened a folder; don't use it.
 
-## Four things that are easy to misread
+## Five things that are easy to misread
 
 **1. `file: null` means the active editor isn't a real file.**
 
@@ -55,7 +55,11 @@ Don't pretend you read the right code. Tell the user: the file has unsaved chang
 
 When the user has selected no text, `selection` is still present — a **zero-width range** where `startLine == endLine` and `startCharacter == endCharacter`. In that case use `cursor.line`; do **not** treat it as a range like `:12-12`.
 
-**4. When `workspace` is unrelated to your current directory, the data may come from another window.**
+**4. `endLine` overshoots by one when the selection ends at a line boundary.**
+
+Coordinates are end-exclusive: selecting whole lines (clicking the line-number gutter, or shift-extending past a line's end) puts `end` at column 1 of the *next* line, so `endCharacter == 1` and `endLine` is one past the last selected line. When `endCharacter == 1` and `endLine > startLine`, read up to `endLine - 1` instead.
+
+**5. When `workspace` is unrelated to your current directory, the data may come from another window.**
 
 The extension maintains a single file at a fixed path, so with multiple VS Code windows open the last writer wins. But **most "mismatches" are normal — don't raise an alarm just because the paths differ**: parent/child directories (you're in a subdirectory of the project, or VS Code has a worktree open) are all fine.
 

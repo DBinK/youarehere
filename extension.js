@@ -82,20 +82,34 @@ function buildRef(ctx) {
   return `${ctx.file}:${ctx.cursor ? ctx.cursor.line : 1}`;
 }
 
+function writeJsonAtomic(file, value) {
+  const tmp = `${file}.${process.pid}.tmp`;
+  fs.writeFileSync(tmp, `${JSON.stringify(value, null, 2)}\n`, { mode: 0o600 });
+  fs.renameSync(tmp, file);
+}
+
 function writeState() {
   if (!activeContext) {
     return;
   }
-
-  fs.mkdirSync(STATE_DIR, { recursive: true });
-  fs.writeFileSync(STATE_FILE, `${JSON.stringify(activeContext, null, 2)}\n`, { mode: 0o600 });
 
   const ref = {
     ref: buildRef(activeContext),
     isDirty: activeContext.isDirty,
     updatedAt: activeContext.updatedAt,
   };
-  fs.writeFileSync(REF_FILE, `${JSON.stringify(ref, null, 2)}\n`, { mode: 0o600 });
+
+  // State reporting is best-effort: a read-only home or a path conflict must
+  // never take the extension down with an exception escaping activate().
+  try {
+    fs.mkdirSync(STATE_DIR, { recursive: true });
+    // context.json last: it carries the full payload, so readers that treat it
+    // as the source of truth never see a torn pair.
+    writeJsonAtomic(REF_FILE, ref);
+    writeJsonAtomic(STATE_FILE, activeContext);
+  } catch (error) {
+    console.warn('youarehere: failed to write state file:', error);
+  }
 }
 
 function removeState() {

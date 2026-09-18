@@ -102,7 +102,7 @@ The full state, for readers that need more than a reference. This is what `youar
 
 Line and character numbers are 1-based.
 
-When nothing is selected, `selection` is a zero-width range: `startLine == endLine` and `startCharacter == endCharacter`. It is never `null`.
+When nothing is selected, `selection` is a zero-width range: `startLine == endLine` and `startCharacter == endCharacter`. It is `null` only when no text editor is active (e.g. the welcome page or a webview has focus).
 
 `isDirty` is `true` when the buffer has unsaved changes, so the file on disk may not match what is on screen.
 
@@ -130,7 +130,7 @@ This writes `youarehere-<version>.vsix`. To install it locally:
 code --install-extension youarehere-<version>.vsix --force
 ```
 
-The `skills/` directory ships inside the VSIX.
+The `skills/` directory is not part of the VSIX — install the skills from the repository as shown in [Quick Start](#quick-start).
 
 ### Release
 

@@ -102,7 +102,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
 行号和列号都是 1-based。
 
-没有选中内容时，`selection` 是一个零宽区间：`startLine == endLine` 且 `startCharacter == endCharacter`。它不会是 `null`。
+没有选中内容时，`selection` 是一个零宽区间：`startLine == endLine` 且 `startCharacter == endCharacter`。只有当没有活动的文本编辑器时（比如焦点在欢迎页或 webview 上）它才是 `null`。
 
 缓冲区有未保存的改动时 `isDirty` 为 `true`，此时磁盘上的文件可能和屏幕上看到的不一致。
 
@@ -130,7 +130,7 @@ npm run package
 code --install-extension youarehere-<version>.vsix --force
 ```
 
-`skills/` 目录会随 VSIX 一起打包。
+`skills/` 目录不随 VSIX 打包，按[快速开始](#快速开始)里的方式从仓库安装。
 
 ### 发布
 
