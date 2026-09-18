@@ -10,7 +10,7 @@ The extension publishes that context to a fixed path on disk. Any agent that can
 
 ## Setup
 
-Install the VS Code extension first, then install the skill:
+Install the VS Code extension first, then install the skills:
 
 ```bash
 npx skills add DBinK/youarehere -g
@@ -20,15 +20,22 @@ npx skills add DBinK/youarehere -g
 
 If `skills` cannot install it, ask your agent to install the skill from https://github.com/DBinK/youarehere.
 
-The skill reads the context file and turns it into a `relativeFile:startLine-endLine` reference. You can also read the file directly without the skill.
+Two skills are bundled:
 
-## Context File
+| Skill | Invocation | Output |
+| --- | --- | --- |
+| `youarehere` | `/youarehere` only | one line: `path:10-16  dirty  2026-09-18T06:28:23.746Z` |
+| `youarehere-full` | automatic, or `/youarehere-full` | the full state below, plus how to read it |
 
-The path is fixed:
+`youarehere` is deliberately not auto-triggered — it is for when you want a bare reference and nothing else.
 
-```text
-~/.youarehere/context.json
-```
+## Context Files
+
+The extension writes two files into a fixed directory. Both use `0600`.
+
+### `~/.youarehere/context.json`
+
+The full state:
 
 ```json
 {
@@ -58,10 +65,24 @@ When nothing is selected, `selection` is a zero-width range — `startLine == en
 
 `isDirty` is `true` when the buffer has unsaved changes, so the file on disk may not match what is on screen.
 
+### `~/.youarehere/ref.json`
+
+A reduced view of the same state, for consumers that only want a reference:
+
+```json
+{
+  "ref": "/path/to/workspace/src/example.ts:10-16",
+  "isDirty": false,
+  "updatedAt": "2026-09-18T06:28:23.746Z"
+}
+```
+
+`ref` is an absolute path. What follows the last colon is either a line range (`10-16`), or a single line (`42`) when nothing is selected.
+
 ## How It Works
 
-- The VS Code extension writes the current editor state (file, cursor, selection) to `~/.youarehere/context.json` whenever it changes.
-- The file is written with `0600` permissions.
+- The VS Code extension writes the full editor state to `~/.youarehere/context.json`, and a reduced three-field view to `~/.youarehere/ref.json`, whenever it changes.
+- Both files are written with `0600` permissions.
 - Consumers read that file directly.
 
 ## Requirements
@@ -78,7 +99,7 @@ When nothing is selected, `selection` is a zero-width range — `startLine == en
 
 ## Multiple Windows
 
-The context file has a single fixed path, so multiple VS Code windows overwrite each other — the most recent one wins. Compare the `workspace` field against your working directory before trusting the data.
+The context file has a single fixed path, so multiple VS Code windows overwrite each other — the most recent one wins. Most differences between `workspace` and your working directory are normal — a subdirectory, or a worktree. Only an unrelated project means the data came from another window.
 
 ## Packaging
 

@@ -7,6 +7,10 @@ const vscode = require('vscode');
 // must be able to find it without shelling out to resolve a temp directory.
 const STATE_DIR = path.join(os.homedir(), '.youarehere');
 const STATE_FILE = path.join(STATE_DIR, 'context.json');
+// A second, deliberately tiny interface: just the reference, the dirty flag and
+// the timestamp. Written alongside the full state so consumers that only need a
+// `path:lines` cite never have to read the whole thing.
+const REF_FILE = path.join(STATE_DIR, 'ref.json');
 
 let activeContext = null;
 
@@ -55,6 +59,25 @@ function getState() {
   }
 }
 
+// `path:start-end` when there is a real selection, `path:line` when the caret is
+// merely resting somewhere. The format itself carries that distinction, so
+// consumers do not need a rule for "the range is zero-width".
+function buildRef(ctx) {
+  if (!ctx.file) {
+    return null;
+  }
+
+  const sel = ctx.selection;
+  const hasSelection =
+    sel && !(sel.startLine === sel.endLine && sel.startCharacter === sel.endCharacter);
+
+  if (hasSelection) {
+    return `${ctx.file}:${sel.startLine}-${sel.endLine}`;
+  }
+
+  return `${ctx.file}:${ctx.cursor ? ctx.cursor.line : 1}`;
+}
+
 function writeState() {
   if (!activeContext) {
     return;
@@ -62,6 +85,13 @@ function writeState() {
 
   fs.mkdirSync(STATE_DIR, { recursive: true });
   fs.writeFileSync(STATE_FILE, `${JSON.stringify(activeContext, null, 2)}\n`, { mode: 0o600 });
+
+  const ref = {
+    ref: buildRef(activeContext),
+    isDirty: activeContext.isDirty,
+    updatedAt: activeContext.updatedAt,
+  };
+  fs.writeFileSync(REF_FILE, `${JSON.stringify(ref, null, 2)}\n`, { mode: 0o600 });
 }
 
 function removeState() {
@@ -70,9 +100,11 @@ function removeState() {
     return;
   }
 
-  try {
-    fs.unlinkSync(STATE_FILE);
-  } catch (_) {}
+  for (const file of [STATE_FILE, REF_FILE]) {
+    try {
+      fs.unlinkSync(file);
+    } catch (_) {}
+  }
 }
 
 function updateActiveContext() {

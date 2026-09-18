@@ -1,64 +1,32 @@
 ---
 name: youarehere
-description: 读取用户在 VS Code 里当前选中的代码位置。当用户用「这段代码」「这里」「我选中的」「当前这个文件」「光标处」「正在看的」等指代，或提出一个没有指明文件位置的代码问题（而用户很可能正看着某段代码）时使用。不要在用户已经明确给出文件路径或粘贴了代码内容时使用。
+description: 读出用户在 VS Code 里的当前位置（文件 + 行号区间），然后去读那段代码。仅在用户显式输入 /youarehere 时调用，不要根据对话内容自动触发。
 ---
 
-# 读取 VS Code 当前选区
+# 输出 VS Code 选区引用
 
-用户在 VS Code 里的当前文件、光标位置和选区，由 `youarehere` 扩展实时写到一个 JSON 文件里。**直接读那个文件就行，不需要写脚本解析。**
-
-## 文件在哪
-
-固定路径，直接读：
-
-```text
-~/.youarehere/context.json
-```
-
-读不到，说明扩展没在运行——告诉用户装或启动 `youarehere` 扩展。
-
-## 文件长这样
+用户在 VS Code 里的当前位置写在 `~/.youarehere/ref.json` 里，只有三个字段：
 
 ```json
 {
-  "schema": "youarehere/v1",
-  "workspace": "/path/to/workspace",
-  "file": "/path/to/workspace/src/example.ts",
-  "relativeFile": "src/example.ts",
+  "ref": "/path/to/workspace/src/example.ts:10-16",
   "isDirty": false,
-  "cursor": { "line": 12, "character": 5 },
-  "activeLineText": "  const x = 1;",
-  "selection": { "startLine": 12, "startCharacter": 1, "endLine": 14, "endCharacter": 26 },
-  "updatedAt": "2026-09-18T02:29:02.529Z"
+  "updatedAt": "2026-09-18T06:28:23.746Z"
 }
 ```
 
-行号、列号都是 **1-based**，可以直接用，不需要换算。
+## 注意
 
-## 三条容易看错的地方
+`ref` 已经拼好了，直接用，不要自己组装路径或行号。
 
-**1. `isDirty` 为 `true` 时，磁盘上的文件和用户屏幕上看到的不是同一份内容。**
+拿到 `ref` 后**自己去读那段代码**——状态文件里只有位置，没有选中文本。
 
-用户改了代码还没保存。你手上的 `file:startLine-endLine` 是**缓冲区里的坐标**，但你去读的是**磁盘文件**——行号可能已经错位，内容可能是旧的。
+冒号后是**行号区间**（`:10-16`）时，用户选中的就是这几行，照此引用即可。冒号后是**单个行号**（`:42`）时，用户只是把光标停在那里，没有选中任何文本。
 
-这时不要假装读到了正确的代码。告诉用户：文件有未保存的改动，你读到的是磁盘版本，请他先保存再问。
+`isDirty` 为 `true` 表示文件有未保存的改动——你按路径去读磁盘，拿到的可能不是用户屏幕上看到的内容，行号也可能已经错位。这时提一句，让用户先保存。
 
-**2. `selection` 不是 null，不代表用户选中了东西。**
+`updatedAt` 明显偏旧（比如几分钟前，而用户说刚选中）时也值得提。
 
-用户没有选中任何文本时，`selection` 仍然存在，是一个**起止相同的零宽区间**——`startLine == endLine` 且 `startCharacter == endCharacter`。这种情况要用 `cursor.line`，**不要**当成 `:12-12` 这样的区间报出去。
+`ref` 为 `null` 时，说明当前活动编辑器不是一个真实文件——比如 diff 视图、Source Control 面板、输出面板。你拿不到文件路径，告诉用户请他在真实文件里选中代码。
 
-**3. 用之前必须比对 `workspace` 和当前工作目录。**
-
-扩展只维护一个固定路径的文件，多开 VS Code 时后写覆盖先写。如果 `workspace` 和你当前的工作目录不一致，这份数据来自另一个窗口——**不要用**，直接告诉用户：状态文件里是 `<那个 workspace>`，而当前在 `<当前目录>`，问他们是不是切错了窗口。
-
-`updatedAt` 是 UTC 时间戳。如果它明显偏旧（比如几分钟前），而用户说"我刚选中的"，也值得提一句。
-
-## 该输出什么
-
-有真选区时，给出 `relativeFile:startLine-endLine` 形式的引用，例如 `src/example.ts:12-14`——这正是用户想要的格式。
-
-**然后自己去读文件拿内容。状态文件里只有位置，没有选中文本。**
-
-没有真选区时，用 `relativeFile:cursor.line`。
-
-`relativeFile` 在 Windows 上可能是反斜杠（`src\foo.ts`），按需转成正斜杠即可。
+`ref.json` 不存在，说明扩展没在运行——告诉用户装或启动 `youarehere` 扩展。
