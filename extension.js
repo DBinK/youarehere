@@ -3,7 +3,7 @@ const os = require('os');
 const path = require('path');
 const vscode = require('vscode');
 
-// A fixed, guessable path: consumers (AI agents reading this file directly)
+// A fixed, guessable path: consumers (AI Agents reading this file directly)
 // must be able to find it without shelling out to resolve a temp directory.
 const STATE_DIR = path.join(os.homedir(), '.youarehere');
 const STATE_FILE = path.join(STATE_DIR, 'context.json');

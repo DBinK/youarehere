@@ -1,7 +1,7 @@
 {
   "name": "youarehere",
   "displayName": "You Are Here",
-  "description": "A VS Code extension that tells AI coding agents where you are looking in your code — which file, cursor position, and selection.",
+  "description": "A VS Code extension that tells AI coding Agents where you are looking in your code — which file, cursor position, and selection.",
   "version": "1.0.2",
   "publisher": "DBinK",
   "license": "MIT",

@@ -1,11 +1,11 @@
 ---
 name: youarehere
-description: 读出用户在 VS Code 里的当前位置（文件 + 行号区间），然后去读那段代码。仅在用户显式输入 /youarehere 时调用，不要根据对话内容自动触发。
+description: Read the user's current position in VS Code (file + line range), then read that code. Only invoke when the user explicitly types /youarehere — do not trigger it from conversation context.
 ---
 
-# 输出 VS Code 选区引用
+# Output the VS Code selection reference
 
-用户在 VS Code 里的当前位置写在 `~/.youarehere/ref.json` 里，只有三个字段：
+The user's current position in VS Code is written to `~/.youarehere/ref.json`, which has exactly three fields:
 
 ```json
 {
@@ -15,18 +15,18 @@ description: 读出用户在 VS Code 里的当前位置（文件 + 行号区间�
 }
 ```
 
-## 注意
+## Notes
 
-`ref` 已经拼好了，直接用，不要自己组装路径或行号。
+`ref` is already assembled — use it as-is, don't build the path or the line numbers yourself.
 
-拿到 `ref` 后**自己去读那段代码**——状态文件里只有位置，没有选中文本。
+Once you have `ref`, **go read that code** — the state file holds a position only, not the selected text.
 
-冒号后是**行号区间**（`:10-16`）时，用户选中的就是这几行，照此引用即可。冒号后是**单个行号**（`:42`）时，用户只是把光标停在那里，没有选中任何文本。
+When what follows the colon is a **line range** (`:10-16`), the user has those lines selected. When it's a **single line number** (`:42`), the user has merely parked the cursor there and selected nothing.
 
-`isDirty` 为 `true` 表示文件有未保存的改动——你按路径去读磁盘，拿到的可能不是用户屏幕上看到的内容，行号也可能已经错位。这时提一句，让用户先保存。
+`isDirty: true` means the file has unsaved changes — reading from disk may give you content that doesn't match what's on the user's screen, with line numbers possibly shifted. Mention it and ask the user to save first.
 
-`updatedAt` 明显偏旧（比如几分钟前，而用户说刚选中）时也值得提。
+It's also worth mentioning if `updatedAt` is clearly stale (minutes old, while the user says they just selected something).
 
-`ref` 为 `null` 时，说明当前活动编辑器不是一个真实文件——比如 diff 视图、Source Control 面板、输出面板。你拿不到文件路径，告诉用户请他在真实文件里选中代码。
+`ref: null` means the active editor isn't a real file — a diff view, the Source Control panel, an output panel. You have no file path; tell the user to select code in a real file.
 
-`ref.json` 不存在，说明扩展没在运行——告诉用户装或启动 `youarehere` 扩展。
+If `ref.json` doesn't exist, the extension isn't running — tell the user to install or launch the `youarehere` extension.

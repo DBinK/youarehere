@@ -1,23 +1,23 @@
 ---
 name: youarehere-full
-description: 读取用户在 VS Code 里当前选中的代码位置。当用户用「这段代码」「这里」「我选中的」「当前这个文件」「光标处」「正在看的」等指代，或提出一个没有指明文件位置的代码问题（而用户很可能正看着某段代码）时使用。不要在用户已经明确给出文件路径或粘贴了代码内容时使用。
+description: Read the code the user is currently looking at in VS Code. Use when the user refers to "this code", "here", "what I've selected", "the current file", "at the cursor", or "what I'm looking at", or asks a code question without naming a location (and they're likely looking at code). Do not use when the user has already given a file path or pasted the code.
 ---
 
-# 读取 VS Code 当前选区
+# Read the current VS Code selection
 
-用户在 VS Code 里的当前文件、光标位置和选区，由 `youarehere` 扩展实时写到一个 JSON 文件里。**直接读那个文件就行，不需要写脚本解析。**
+The user's current file, cursor position and selection in VS Code are written in real time to a JSON file by the `youarehere` extension. **Just read that file — there's no need to write a script to parse it.**
 
-## 文件在哪
+## Where the file is
 
-固定路径，直接读：
+It's a fixed path, read it directly:
 
 ```text
 ~/.youarehere/context.json
 ```
 
-读不到，说明扩展没在运行——告诉用户装或启动 `youarehere` 扩展。
+If you can't read it, the extension isn't running — tell the user to install or launch the `youarehere` extension.
 
-## 文件长这样
+## What it looks like
 
 ```json
 {
@@ -33,42 +33,42 @@ description: 读取用户在 VS Code 里当前选中的代码位置。当用户�
 }
 ```
 
-行号、列号都是 **1-based**，可以直接用，不需要换算。
+Line and character numbers are **1-based** — use them directly, no conversion needed.
 
-路径用 `file`——它是绝对路径，任何工作目录下都能直接读。`relativeFile` 是相对 workspace 的版本，用户没打开文件夹时是 `null`，不要用它。
+Use `file` for the path — it's absolute, readable from any working directory. `relativeFile` is the workspace-relative version and is `null` when the user hasn't opened a folder; don't use it.
 
-## 四条容易看错的地方
+## Four things that are easy to misread
 
-**1. `file` 为 `null` 时，当前活动编辑器不是一个真实文件。**
+**1. `file: null` means the active editor isn't a real file.**
 
-比如 diff 视图、Source Control 面板、输出面板。这时 `cursor`、`activeLineText` 可能都有值，但你拿不到文件路径，**读不到任何代码**。
+A diff view, the Source Control panel, an output panel. `cursor` and `activeLineText` may still have values, but you have no file path — **you can't read any code**.
 
-直接告诉用户：现在没有可读的文件，请他在真实文件里选中代码。
+Tell the user directly: there's no readable file right now, please select code in a real file.
 
-**2. `isDirty` 为 `true` 时，磁盘上的文件和用户屏幕上看到的不是同一份内容。**
+**2. `isDirty: true` means the file on disk is not what the user sees on screen.**
 
-用户改了代码还没保存。你手上的行号是**缓冲区里的坐标**，但你去读的是**磁盘文件**——行号可能已经错位，内容可能是旧的。
+The user changed code without saving. Your line numbers are **buffer coordinates**, but you're reading the **file on disk** — line numbers may have shifted and the content may be stale.
 
-这时不要假装读到了正确的代码。告诉用户：文件有未保存的改动，你读到的是磁盘版本，请他先保存再问。
+Don't pretend you read the right code. Tell the user: the file has unsaved changes, what you read is the on-disk version, please save and ask again.
 
-**3. `selection` 不是 null，不代表用户选中了东西。**
+**3. `selection` not being null does not mean the user selected something.**
 
-用户没有选中任何文本时，`selection` 仍然存在，是一个**起止相同的零宽区间**——`startLine == endLine` 且 `startCharacter == endCharacter`。这种情况用 `cursor.line`，**不要**当成 `:12-12` 这样的区间。
+When the user has selected no text, `selection` is still present — a **zero-width range** where `startLine == endLine` and `startCharacter == endCharacter`. In that case use `cursor.line`; do **not** treat it as a range like `:12-12`.
 
-**4. `workspace` 和你当前目录不相干时，数据可能来自另一个窗口。**
+**4. When `workspace` is unrelated to your current directory, the data may come from another window.**
 
-扩展只维护一个固定路径的文件，多开 VS Code 时后写覆盖先写。但**大多数"不一致"是正常的，不要一看到不同就报警**——父子目录（你在项目子目录里开会话、或 VS Code 打开的只是某个 worktree）都算相干。
+The extension maintains a single file at a fixed path, so with multiple VS Code windows open the last writer wins. But **most "mismatches" are normal — don't raise an alarm just because the paths differ**: parent/child directories (you're in a subdirectory of the project, or VS Code has a worktree open) are all fine.
 
-只有看起来像**两个不相干的项目**时（比如状态文件里是 `/path/to/project-a`，你当前在 `/path/to/project-b`），才跟用户确认：状态文件里是 `<workspace>`，你当前在 `<当前目录>`，问是不是切错了窗口。
+Only when they look like **two unrelated projects** (the state file says `/path/to/project-a`, you're in `/path/to/project-b`) should you check with the user: the state file says `<workspace>`, you're in `<current directory>` — ask whether they have the wrong window.
 
-`workspace` 为 `null` 时（用户没打开文件夹，只开了单个文件）跳过这一条。
+When `workspace` is `null` (the user opened a single file, no folder), skip this one.
 
-`updatedAt` 是 UTC 时间戳。如果它明显偏旧（比如几分钟前），而用户说"我刚选中的"，也值得提一句。
+`updatedAt` is a UTC timestamp. If it's clearly stale (minutes old) while the user says "I just selected this", that's worth mentioning too.
 
-## 该做什么
+## What to do
 
-**自己去读文件拿内容**——状态文件里只有位置，没有选中文本。
+**Go read the file yourself for the content** — the state file holds a position only, not the selected text.
 
-有真选区时读 `startLine` 到 `endLine` 这几行，否则读 `cursor.line` 那一行。
+With a real selection, read the lines from `startLine` to `endLine`; otherwise read the line at `cursor.line`.
 
-拿到代码后回答用户的问题。
+Then answer the user's question.
