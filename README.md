@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="images/here.png" alt="You Are Here logo" width="180">
+
 # You Are Here
 
 **A VS Code extension that hands your IDE selection to the CLI Agent in your terminal.**
