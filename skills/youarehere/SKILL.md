@@ -25,6 +25,7 @@ description: 读取用户在 VS Code 里当前选中的代码位置。当用户�
   "workspace": "/path/to/workspace",
   "file": "/path/to/workspace/src/example.ts",
   "relativeFile": "src/example.ts",
+  "isDirty": false,
   "cursor": { "line": 12, "character": 5 },
   "activeLineText": "  const x = 1;",
   "selection": { "startLine": 12, "startCharacter": 1, "endLine": 14, "endCharacter": 26 },
@@ -34,13 +35,19 @@ description: 读取用户在 VS Code 里当前选中的代码位置。当用户�
 
 行号、列号都是 **1-based**，可以直接用，不需要换算。
 
-## 两条容易看错的地方
+## 三条容易看错的地方
 
-**1. `selection` 不是 null，不代表用户选中了东西。**
+**1. `isDirty` 为 `true` 时，磁盘上的文件和用户屏幕上看到的不是同一份内容。**
+
+用户改了代码还没保存。你手上的 `file:startLine-endLine` 是**缓冲区里的坐标**，但你去读的是**磁盘文件**——行号可能已经错位，内容可能是旧的。
+
+这时不要假装读到了正确的代码。告诉用户：文件有未保存的改动，你读到的是磁盘版本，请他先保存再问。
+
+**2. `selection` 不是 null，不代表用户选中了东西。**
 
 用户没有选中任何文本时，`selection` 仍然存在，是一个**起止相同的零宽区间**——`startLine == endLine` 且 `startCharacter == endCharacter`。这种情况要用 `cursor.line`，**不要**当成 `:12-12` 这样的区间报出去。
 
-**2. 用之前必须比对 `workspace` 和当前工作目录。**
+**3. 用之前必须比对 `workspace` 和当前工作目录。**
 
 扩展只维护一个固定路径的文件，多开 VS Code 时后写覆盖先写。如果 `workspace` 和你当前的工作目录不一致，这份数据来自另一个窗口——**不要用**，直接告诉用户：状态文件里是 `<那个 workspace>`，而当前在 `<当前目录>`，问他们是不是切错了窗口。
 

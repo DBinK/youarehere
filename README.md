@@ -6,9 +6,7 @@
 
 A VS Code extension that tells AI coding agents where you are looking in your code — which file, cursor position, and selection.
 
-The extension publishes that context to a fixed path on disk. Any agent that can read a file can pick it up — no MCP server, no extra process, no configuration.
-
-Inspired by [yuichisuzuki0601/active-context-mcp](https://github.com/yuichisuzuki0601/active-context-mcp), which exposes the same context through an MCP server. This fork drops the MCP layer and ships a skill instead.
+The extension publishes that context to a fixed path on disk. Any agent that can read a file can pick it up.
 
 ## Setup
 
@@ -20,7 +18,7 @@ npx skills add DBinK/youarehere -g
 
 `-g` installs into your user-level skills directory for every supported agent it detects. Leave it off to install into the current project instead.
 
-If `skills` does not detect your agent, copy the skill into `~/.agents/skills/` manually.
+If `skills` cannot install it, ask your agent to install the skill from https://github.com/DBinK/youarehere.
 
 The skill reads the context file and turns it into a `relativeFile:startLine-endLine` reference. You can also read the file directly without the skill.
 
@@ -38,6 +36,7 @@ The path is fixed:
   "workspace": "/path/to/workspace",
   "file": "/path/to/workspace/src/example.ts",
   "relativeFile": "src/example.ts",
+  "isDirty": false,
   "cursor": {
     "line": 10,
     "character": 5
@@ -56,6 +55,8 @@ The path is fixed:
 Line and character numbers are 1-based.
 
 When nothing is selected, `selection` is a zero-width range — `startLine == endLine` and `startCharacter == endCharacter`. It is never `null`.
+
+`isDirty` is `true` when the buffer has unsaved changes, so the file on disk may not match what is on screen.
 
 ## How It Works
 
@@ -97,3 +98,7 @@ The `skills/` directory ships inside the VSIX. `notes/` is excluded by `.vscodei
 ## License
 
 MIT
+
+## Credits
+
+Inspired by [yuichisuzuki0601/active-context-mcp](https://github.com/yuichisuzuki0601/active-context-mcp).

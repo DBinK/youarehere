@@ -87,6 +87,7 @@ function updateActiveContext() {
     workspace: workspacePath,
     file: filePath,
     relativeFile: filePath && workspacePath ? path.relative(workspacePath, filePath) : null,
+    isDirty: document ? document.isDirty : null,
     cursor: toPosition(editor?.selection.active),
     activeLineText: getActiveLineText(document, editor?.selection),
     selection: toRange(editor?.selection),
