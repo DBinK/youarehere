@@ -4,6 +4,9 @@
 images/*.svg
 *.code-workspace
 node_modules/
+out/
+dist/
+tmp/
 package-lock.json
 *.log
 npm-debug.log*
