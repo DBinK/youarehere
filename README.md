@@ -86,10 +86,10 @@ The full state, for readers that need more than a reference. This is what `youar
   "relativeFile": "src/example.ts",
   "isDirty": false,
   "cursor": {
-    "line": 16,
-    "character": 21
+    "line": 17,
+    "character": 1
   },
-  "activeLineText": "  return parse(source);",
+  "activeLineText": "}",
   "selection": {
     "startLine": 10,
     "startCharacter": 1,

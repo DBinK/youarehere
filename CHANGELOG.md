@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Changed the state file writes to atomic write-temp-then-rename, so a reader never sees a half-written `context.json` or `ref.json`
 - Changed the `skills/` directory to no longer ship inside the VSIX; skills are installed from the repository with `npx skills add`
+- Changed the marketplace listing to lead with `IDE Selection to Your CLI Agent`, with a matching description and keywords, and replaced the extension icon
 
 ### Fixed
 

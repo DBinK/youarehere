@@ -86,10 +86,10 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
   "relativeFile": "src/example.ts",
   "isDirty": false,
   "cursor": {
-    "line": 16,
-    "character": 21
+    "line": 17,
+    "character": 1
   },
-  "activeLineText": "  return parse(source);",
+  "activeLineText": "}",
   "selection": {
     "startLine": 10,
     "startCharacter": 1,
