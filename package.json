@@ -1,11 +1,11 @@
 {
   "name": "youarehere",
-  "displayName": "You Are Here",
-  "description": "A VS Code extension that tells AI coding Agents where you are looking in your code — which file, cursor position, and selection.",
+  "displayName": "You Are Here - IDE Selection to Your CLI Agent",
+  "description": "A VS Code extension that hands your IDE selection to your CLI Agent — file, cursor position and selection are written to a fixed path the Agent reads. No MCP server or client config needed.",
   "version": "0.1.0",
   "publisher": "DBinK",
   "license": "MIT",
-  "icon": "images/icon.png",
+  "icon": "images/here.png",
   "galleryBanner": {
     "color": "#0B1020",
     "theme": "dark"
@@ -21,10 +21,14 @@
   "keywords": [
     "ai",
     "agent",
+    "cli",
     "context",
     "cursor",
     "selection",
-    "skill"
+    "skill",
+    "terminal",
+    "claude-code",
+    "codex"
   ],
   "engines": {
     "vscode": "^1.90.0"

@@ -9,6 +9,7 @@ dist/
 tmp/
 notes/
 skills/
+.github/
 package-lock.json
 *.log
 npm-debug.log*

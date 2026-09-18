@@ -84,8 +84,13 @@ function buildRef(ctx) {
 
 function writeJsonAtomic(file, value) {
   const tmp = `${file}.${process.pid}.tmp`;
-  fs.writeFileSync(tmp, `${JSON.stringify(value, null, 2)}\n`, { mode: 0o600 });
-  fs.renameSync(tmp, file);
+  try {
+    fs.writeFileSync(tmp, `${JSON.stringify(value, null, 2)}\n`, { mode: 0o600 });
+    fs.renameSync(tmp, file);
+  } catch (error) {
+    fs.rmSync(tmp, { force: true });
+    throw error;
+  }
 }
 
 function writeState() {

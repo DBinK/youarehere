@@ -2,7 +2,7 @@
 
 # You Are Here
 
-**A VS Code extension that tells AI coding Agents where you're looking in your code.**
+**A VS Code extension that hands your IDE selection to the CLI Agent in your terminal.**
 
 [![Stars](https://img.shields.io/github/stars/DBinK/youarehere)](https://github.com/DBinK/youarehere/stargazers)
 [![Version](https://vsmarketplacebadges.dev/version-short/DBinK.youarehere.svg)](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere)
@@ -18,7 +18,7 @@
 
 An AI coding Agent can read any file in a project, but it cannot tell which file is open. Passing that position manually means supplying a file path and line range, or pasting the code.
 
-This extension writes the active file, cursor position and selection to a fixed path on disk, where an Agent can read it. The bundled skills are the intended interface, and they follow the [Agent Skills](https://agentskills.io) format: around 70 Agents implement it, among them Codex, Cursor, Gemini CLI, opencode, GitHub Copilot, Cline, Windsurf and Zed.
+This extension writes the active file, cursor position and selection to a fixed path on disk, where an Agent can read it. The bundled skills are the intended interface, and they follow the [Agent Skills](https://agentskills.io) format: around 70 Agents implement it, among them Codex, Cursor, Gemini CLI, opencode, GitHub Copilot, Cline, Windsurf and Zed. It matters most with CLI Agents, which cannot see your editor; in-editor Agents can already read the selection themselves.
 
 ## Quick Start
 
@@ -58,7 +58,7 @@ This extension writes the active file, cursor position and selection to a fixed 
 
 The extension writes two files into a fixed directory. Both use `0600`.
 
-They are rewritten whenever the editor state changes: on startup, when the active editor changes, when the selection changes, and when workspace folders change.
+They are rewritten whenever the editor state changes: on startup, when the active editor changes, when the cursor or selection moves, when the active file is saved or edited, and when workspace folders change.
 
 ### `~/.youarehere/ref.json`
 
@@ -86,23 +86,25 @@ The full state, for readers that need more than a reference. This is what `youar
   "relativeFile": "src/example.ts",
   "isDirty": false,
   "cursor": {
-    "line": 10,
-    "character": 5
+    "line": 16,
+    "character": 21
   },
-  "activeLineText": "const value = example();",
+  "activeLineText": "  return parse(source);",
   "selection": {
     "startLine": 10,
-    "startCharacter": 5,
-    "endLine": 10,
-    "endCharacter": 5
+    "startCharacter": 1,
+    "endLine": 16,
+    "endCharacter": 21
   },
-  "updatedAt": "2026-07-07T10:00:00.000Z"
+  "updatedAt": "2026-09-18T06:28:23.746Z"
 }
 ```
 
 Line and character numbers are 1-based.
 
 When nothing is selected, `selection` is a zero-width range: `startLine == endLine` and `startCharacter == endCharacter`. It is `null` only when no text editor is active (e.g. the welcome page or a webview has focus).
+
+Ranges are end-exclusive, as in VS Code: a selection that stops at the start of a line has an `endCharacter` of `1` and selects nothing on that line. That is why the `ref` above reads `10-16` while its `selection` ends on line 16.
 
 `isDirty` is `true` when the buffer has unsaved changes, so the file on disk may not match what is on screen.
 

@@ -73,6 +73,6 @@ When `workspace` is `null` (the user opened a single file, no folder), skip this
 
 **Go read the file yourself for the content** — the state file holds a position only, not the selected text.
 
-With a real selection, read the lines from `startLine` to `endLine`; otherwise read the line at `cursor.line`.
+With a real selection, read the lines from `startLine` to `endLine`, dropping `endLine` when `endCharacter` is `1` and the selection spans more than one line; otherwise read the line at `cursor.line`.
 
 Then answer the user's question.

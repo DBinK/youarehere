@@ -2,7 +2,7 @@
 
 # You Are Here
 
-**一个 VS Code 扩展，告诉 AI 编程 Agent 你正在看代码的哪个位置。**
+**一个 VS Code 扩展，把你 IDE 里选中的代码交给终端里的 CLI Agent。**
 
 [![Stars](https://img.shields.io/github/stars/DBinK/youarehere)](https://github.com/DBinK/youarehere/stargazers)
 [![Version](https://vsmarketplacebadges.dev/version-short/DBinK.youarehere.svg)](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere)
@@ -18,7 +18,7 @@
 
 AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的是哪一个。要手动补上这个信息，就需要提供文件路径和行号区间，或者把代码粘贴过去。
 
-这个扩展把当前文件、光标位置和选区写到一个固定路径，Agent 可以直接读。推荐用法是内置的两个 skill，它们遵循 [Agent Skills](https://agentskills.io) 格式，Codex、Cursor、Gemini CLI、opencode、GitHub Copilot、Cline、Windsurf、Zed 等约 70 个 Agent 都能用。
+这个扩展把当前文件、光标位置和选区写到一个固定路径，Agent 可以直接读。推荐用法是内置的两个 skill，它们遵循 [Agent Skills](https://agentskills.io) 格式，Codex、Cursor、Gemini CLI、opencode、GitHub Copilot、Cline、Windsurf、Zed 等约 70 个 Agent 都能用。CLI Agent 最需要它——它们看不到你的编辑器，而窗口内的 Agent 本来就能自己拿到选区。
 
 ## 快速开始
 
@@ -58,7 +58,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
 扩展把两个文件写进固定目录，权限都是 `0600`。
 
-编辑器状态变化时两个文件都会重写：启动后、活动编辑器切换时、选区变化时、工作区文件夹变化时。
+编辑器状态变化时两个文件都会重写：启动后、活动编辑器切换时、光标或选区变化时、当前文件保存或内容变更时、工作区文件夹变化时。
 
 ### `~/.youarehere/ref.json`
 
@@ -86,23 +86,25 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
   "relativeFile": "src/example.ts",
   "isDirty": false,
   "cursor": {
-    "line": 10,
-    "character": 5
+    "line": 16,
+    "character": 21
   },
-  "activeLineText": "const value = example();",
+  "activeLineText": "  return parse(source);",
   "selection": {
     "startLine": 10,
-    "startCharacter": 5,
-    "endLine": 10,
-    "endCharacter": 5
+    "startCharacter": 1,
+    "endLine": 16,
+    "endCharacter": 21
   },
-  "updatedAt": "2026-07-07T10:00:00.000Z"
+  "updatedAt": "2026-09-18T06:28:23.746Z"
 }
 ```
 
 行号和列号都是 1-based。
 
 没有选中内容时，`selection` 是一个零宽区间：`startLine == endLine` 且 `startCharacter == endCharacter`。只有当没有活动的文本编辑器时（比如焦点在欢迎页或 webview 上）它才是 `null`。
+
+区间和 VS Code 一样是左闭右开的：选区停在一行行首时 `endCharacter` 为 `1`，该行上没有任何内容被选中。上面 `ref` 是 `10-16` 而 `selection` 结束在第 16 行，原因就在这里。
 
 缓冲区有未保存的改动时 `isDirty` 为 `true`，此时磁盘上的文件可能和屏幕上看到的不一致。
 
