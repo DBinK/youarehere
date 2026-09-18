@@ -7,7 +7,7 @@
 [![Stars](https://img.shields.io/github/stars/DBinK/youarehere)](https://github.com/DBinK/youarehere/stargazers)
 [![Version](https://vsmarketplacebadges.dev/version-short/DBinK.youarehere.svg)](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere)
 [![Installs](https://vsmarketplacebadges.dev/installs-short/DBinK.youarehere.svg)](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere)
-[![License](https://img.shields.io/github/license/DBinK/youarehere)](https://github.com/DBinK/youarehere/blob/main/LICENSE.txt)
+[![License](https://img.shields.io/github/license/DBinK/youarehere)](https://github.com/DBinK/youarehere/blob/main/LICENSE)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-blueviolet)](https://agentskills.io)
 
 **English** | [简体中文](README.zh-CN.md)
@@ -22,7 +22,7 @@ This extension writes the active file, cursor position and selection to a fixed 
 
 ## Quick Start
 
-1. **Install the VS Code extension** — from the Marketplace, or from a VSIX during development (see [Development](#development)).
+1. **Install the VS Code extension** — from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere) or [Open VSX](https://open-vsx.org/extension/DBinK/youarehere), or from a VSIX during development (see [Development](#development)).
 
 2. **Install the skills**
 
@@ -108,7 +108,7 @@ When nothing is selected, `selection` is a zero-width range: `startLine == endLi
 
 ## Multiple Windows
 
-The state file has a single fixed path, so concurrent VS Code windows overwrite one another; the most recently focused window wins. A `workspace` that differs from the reader's working directory is usually not a problem, since one is often a subdirectory or worktree of the other. Compare them only when they name unrelated projects.
+The state file has a single fixed path, so concurrent VS Code windows overwrite one another. The most recently focused window wins. A `workspace` that differs from the reader's working directory is usually not a problem, since one is often a subdirectory or worktree of the other. Compare them only when they name unrelated projects.
 
 ## Requirements
 
@@ -121,7 +121,7 @@ Everything lives in `extension.js`. To build the extension:
 
 ```bash
 npm install
-npx vsce package --no-dependencies
+npm run package
 ```
 
 This writes `youarehere-<version>.vsix`. To install it locally:
@@ -131,6 +131,24 @@ code --install-extension youarehere-<version>.vsix --force
 ```
 
 The `skills/` directory ships inside the VSIX.
+
+### Release
+
+Every version goes to both the Visual Studio Marketplace and Open VSX. Each registry reads its own token from the environment, so export both first.
+
+```bash
+export VSCE_PAT=<azure-devops-pat>   # needs the Marketplace > Manage scope
+export OVSX_PAT=<open-vsx-token>
+```
+
+Then publish:
+
+```bash
+npm run publish:vsce
+npm run publish:ovsx
+```
+
+Both commands package the extension from source and upload the result. The `DBinK` publisher on the Marketplace and the `DBinK` namespace on Open VSX must exist before the first publish. Create the Open VSX namespace with `npx ovsx create-namespace DBinK -p "$OVSX_PAT"`. The publish tooling needs Node.js 22 or newer.
 
 ## Credits
 

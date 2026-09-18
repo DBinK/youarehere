@@ -7,7 +7,7 @@
 [![Stars](https://img.shields.io/github/stars/DBinK/youarehere)](https://github.com/DBinK/youarehere/stargazers)
 [![Version](https://vsmarketplacebadges.dev/version-short/DBinK.youarehere.svg)](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere)
 [![Installs](https://vsmarketplacebadges.dev/installs-short/DBinK.youarehere.svg)](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere)
-[![License](https://img.shields.io/github/license/DBinK/youarehere)](https://github.com/DBinK/youarehere/blob/main/LICENSE.txt)
+[![License](https://img.shields.io/github/license/DBinK/youarehere)](https://github.com/DBinK/youarehere/blob/main/LICENSE)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-blueviolet)](https://agentskills.io)
 
 [English](README.md) | **简体中文**
@@ -22,7 +22,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
 ## 快速开始
 
-1. **安装 VS Code 扩展**——从 Marketplace 安装，开发阶段也可以从 VSIX 装（见[开发](#开发)）。
+1. **安装 VS Code 扩展**——从 [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere) 或 [Open VSX](https://open-vsx.org/extension/DBinK/youarehere) 安装，开发阶段也可以从 VSIX 装（见[开发](#开发)）。
 
 2. **安装 skills**
 
@@ -121,7 +121,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
 ```bash
 npm install
-npx vsce package --no-dependencies
+npm run package
 ```
 
 这会生成 `youarehere-<version>.vsix`。本地安装：
@@ -131,6 +131,24 @@ code --install-extension youarehere-<version>.vsix --force
 ```
 
 `skills/` 目录会随 VSIX 一起打包。
+
+### 发布
+
+每个版本同时发到 Visual Studio Marketplace 和 Open VSX。两个命令都从环境变量读令牌，先导出。
+
+```bash
+export VSCE_PAT=<azure-devops-pat>   # 需要 Marketplace > Manage 权限
+export OVSX_PAT=<open-vsx-token>
+```
+
+然后发布：
+
+```bash
+npm run publish:vsce
+npm run publish:ovsx
+```
+
+两个命令都会从源码打包再上传。首次发布前，Marketplace 上的 `DBinK` publisher 和 Open VSX 上的 `DBinK` namespace 必须已存在。Open VSX 建 namespace 用 `npx ovsx create-namespace DBinK -p "$OVSX_PAT"`。发布工具需要 Node.js 22 或更高版本。
 
 ## 致谢
 

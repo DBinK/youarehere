@@ -2,10 +2,14 @@
   "name": "youarehere",
   "displayName": "You Are Here",
   "description": "A VS Code extension that tells AI coding Agents where you are looking in your code — which file, cursor position, and selection.",
-  "version": "1.0.2",
+  "version": "0.1.0",
   "publisher": "DBinK",
   "license": "MIT",
   "icon": "images/icon.png",
+  "galleryBanner": {
+    "color": "#0B1020",
+    "theme": "dark"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/DBinK/youarehere.git"
@@ -25,17 +29,24 @@
   "engines": {
     "vscode": "^1.90.0"
   },
-  "scripts": {
-    "package": "vsce package"
-  },
   "categories": [
+    "AI",
     "Other"
+  ],
+  "extensionKind": [
+    "workspace"
   ],
   "activationEvents": [
     "onStartupFinished"
   ],
   "main": "./extension.js",
+  "scripts": {
+    "package": "vsce package",
+    "publish:vsce": "vsce publish",
+    "publish:ovsx": "ovsx publish"
+  },
   "devDependencies": {
-    "@vscode/vsce": "latest"
+    "@vscode/vsce": "^3.9.2",
+    "ovsx": "^1.2.0"
   }
 }
