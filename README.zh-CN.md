@@ -93,8 +93,8 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
   "selection": {
     "startLine": 10,
     "startCharacter": 1,
-    "endLine": 16,
-    "endCharacter": 21
+    "endLine": 17,
+    "endCharacter": 1
   },
   "updatedAt": "2026-09-18T06:28:23.746Z"
 }
@@ -104,7 +104,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
 没有选中内容时，`selection` 是一个零宽区间：`startLine == endLine` 且 `startCharacter == endCharacter`。只有当没有活动的文本编辑器时（比如焦点在欢迎页或 webview 上）它才是 `null`。
 
-区间和 VS Code 一样是左闭右开的：选区停在一行行首时 `endCharacter` 为 `1`，该行上没有任何内容被选中。上面 `ref` 是 `10-16` 而 `selection` 结束在第 16 行，原因就在这里。
+区间和 VS Code 一样是左闭右开的：选区停在一行行首时 `endCharacter` 为 `1`，该行上没有任何内容被选中。上面 `selection` 的 `end` 落在第 17 行行首，所以实际选中到第 16 行为止，`ref` 读作 `10-16`，原因就在这里。
 
 缓冲区有未保存的改动时 `isDirty` 为 `true`，此时磁盘上的文件可能和屏幕上看到的不一致。
 

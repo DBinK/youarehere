@@ -7,10 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-18
+
+### Added
+
+- Added the end-exclusive coordinate rule to the `youarehere-full` skill, so a whole-line selection no longer makes the Agent read one line too many
+- Added a failure warning when the state file cannot be written (e.g. a read-only home directory), instead of failing extension activation
+
+### Changed
+
+- Changed the state file writes to atomic write-temp-then-rename, so a reader never sees a half-written `context.json` or `ref.json`
+- Changed the `skills/` directory to no longer ship inside the VSIX; skills are installed from the repository with `npx skills add`
+
 ### Fixed
 
 - Fixed `ref.json` citing one line too many when a selection ends at the start of the following line
 - Fixed `isDirty` staying stale after saving the active file
+- Fixed leftover `.tmp` files accumulating in `~/.youarehere` when a state write failed midway
 
 ## [0.1.0] - 2026-09-18
 
@@ -31,5 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed the bundled MCP server. Agents read the state file directly through the bundled skills, so an MCP client entry is no longer needed
 
-[Unreleased]: https://github.com/DBinK/youarehere/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/DBinK/youarehere/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/DBinK/youarehere/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DBinK/youarehere/releases/tag/v0.1.0

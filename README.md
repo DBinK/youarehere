@@ -93,8 +93,8 @@ The full state, for readers that need more than a reference. This is what `youar
   "selection": {
     "startLine": 10,
     "startCharacter": 1,
-    "endLine": 16,
-    "endCharacter": 21
+    "endLine": 17,
+    "endCharacter": 1
   },
   "updatedAt": "2026-09-18T06:28:23.746Z"
 }
@@ -104,7 +104,7 @@ Line and character numbers are 1-based.
 
 When nothing is selected, `selection` is a zero-width range: `startLine == endLine` and `startCharacter == endCharacter`. It is `null` only when no text editor is active (e.g. the welcome page or a webview has focus).
 
-Ranges are end-exclusive, as in VS Code: a selection that stops at the start of a line has an `endCharacter` of `1` and selects nothing on that line. That is why the `ref` above reads `10-16` while its `selection` ends on line 16.
+Ranges are end-exclusive, as in VS Code: a selection that stops at the start of a line has an `endCharacter` of `1` and selects nothing on that line. That is why the `ref` above reads `10-16` while its `selection` ends at the start of line 17.
 
 `isDirty` is `true` when the buffer has unsaved changes, so the file on disk may not match what is on screen.
 
