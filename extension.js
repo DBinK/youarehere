@@ -3,8 +3,10 @@ const os = require('os');
 const path = require('path');
 const vscode = require('vscode');
 
-const STATE_DIR = path.join(os.tmpdir(), 'active-context-mcp');
-const STATE_FILE = path.join(STATE_DIR, 'active-context.json');
+// A fixed, guessable path: consumers (AI agents reading this file directly)
+// must be able to find it without shelling out to resolve a temp directory.
+const STATE_DIR = path.join(os.homedir(), '.youarehere');
+const STATE_FILE = path.join(STATE_DIR, 'context.json');
 
 let activeContext = null;
 
@@ -59,7 +61,7 @@ function writeState() {
   }
 
   fs.mkdirSync(STATE_DIR, { recursive: true });
-  fs.writeFileSync(STATE_FILE, `${JSON.stringify(activeContext, null, 2)}\n`);
+  fs.writeFileSync(STATE_FILE, `${JSON.stringify(activeContext, null, 2)}\n`, { mode: 0o600 });
 }
 
 function removeState() {
@@ -81,7 +83,7 @@ function updateActiveContext() {
   const filePath = document?.uri.scheme === 'file' ? document.uri.fsPath : null;
 
   activeContext = {
-    schema: 'active-context-mcp/v1',
+    schema: 'youarehere/v1',
     workspace: workspacePath,
     file: filePath,
     relativeFile: filePath && workspacePath ? path.relative(workspacePath, filePath) : null,

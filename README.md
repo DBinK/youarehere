@@ -1,48 +1,40 @@
-# Active Context MCP
+# You Are Here
 
-[GitHub repository](https://github.com/yuichisuzuki0601/active-context-mcp)
+[GitHub repository](https://github.com/DBinK/youarehere)
 
 ## Description
 
-A VS Code extension for telling MCP-compatible AI tools where you are looking in your code — which file, cursor position, and selection.
+A VS Code extension that tells AI coding agents where you are looking in your code — which file, cursor position, and selection.
+
+The extension publishes that context to a fixed path on disk. Any agent that can read a file can pick it up — no MCP server, no extra process, no configuration.
+
+Inspired by [yuichisuzuki0601/active-context-mcp](https://github.com/yuichisuzuki0601/active-context-mcp), which exposes the same context through an MCP server. This fork drops the MCP layer and ships a skill instead.
 
 ## Setup
 
-Install the VS Code extension first. Then add the MCP command to your MCP-compatible AI tool.
+Install the VS Code extension first, then install the skill:
 
-For tools that use an `mcpServers` config format, add this entry:
+```bash
+npx skills add DBinK/youarehere -g
+```
+
+`-g` installs into your user-level skills directory for every supported agent it detects. Leave it off to install into the current project instead.
+
+If `skills` does not detect your agent, copy the skill into `~/.agents/skills/` manually.
+
+The skill reads the context file and turns it into a `relativeFile:startLine-endLine` reference. You can also read the file directly without the skill.
+
+## Context File
+
+The path is fixed:
+
+```text
+~/.youarehere/context.json
+```
 
 ```json
 {
-  "mcpServers": {
-    "active_context": {
-      "command": "npx",
-      "args": ["-y", "active-context-mcp"]
-    }
-  }
-}
-```
-
-Some tools store this in a global MCP config file, some store it in a per-project config, and some expose it through a settings UI. The important values are:
-
-```text
-command: npx
-args: -y active-context-mcp
-```
-
-## MCP Tool
-
-The MCP command exposes one tool:
-
-```text
-get
-```
-
-It returns the current VS Code active editor context:
-
-```json
-{
-  "schema": "active-context-mcp/v1",
+  "schema": "youarehere/v1",
   "workspace": "/path/to/workspace",
   "file": "/path/to/workspace/src/example.ts",
   "relativeFile": "src/example.ts",
@@ -61,17 +53,20 @@ It returns the current VS Code active editor context:
 }
 ```
 
+Line and character numbers are 1-based.
+
+When nothing is selected, `selection` is a zero-width range — `startLine == endLine` and `startCharacter == endCharacter`. It is never `null`.
+
 ## How It Works
 
-- The VS Code extension writes the current editor state (file, cursor, selection) to a temporary file whenever it changes.
-  - File: `os.tmpdir()/active-context-mcp/active-context.json`
-- The MCP server reads that file and returns the content when the AI tool calls `get`.
+- The VS Code extension writes the current editor state (file, cursor, selection) to `~/.youarehere/context.json` whenever it changes.
+- The file is written with `0600` permissions.
+- Consumers read that file directly.
 
 ## Requirements
 
 - VS Code is running with this extension installed.
-- Node.js and `npx` are available to the MCP client.
-- The MCP client runs on the same machine as VS Code.
+- The consumer runs on the same machine as VS Code.
 
 ## When It Updates
 
@@ -80,84 +75,25 @@ It returns the current VS Code active editor context:
 - When the selection changes
 - When workspace folders change
 
----
+## Multiple Windows
 
-[GitHub リポジトリ](https://github.com/yuichisuzuki0601/active-context-mcp)
+The context file has a single fixed path, so multiple VS Code windows overwrite each other — the most recent one wins. Compare the `workspace` field against your working directory before trusting the data.
 
-## 機能説明
+## Packaging
 
-今あなたが VS Code のどこを見ているか — 開いているファイル、カーソルの位置、選択範囲 — を MCP 対応 AI ツールに伝えるための拡張機能です。
-
-## 設定
-
-先に VS Code 拡張機能をインストールしてください。そのあと、MCP 対応 AI ツールに MCP command を追加します。
-
-`mcpServers` 形式の設定を使うツールでは、次の entry を追加します。
-
-```json
-{
-  "mcpServers": {
-    "active_context": {
-      "command": "npx",
-      "args": ["-y", "active-context-mcp"]
-    }
-  }
-}
+```bash
+npm install
+npx vsce package --no-dependencies
 ```
 
-設定場所はツールによって違います。グローバル MCP 設定ファイル、プロジェクト設定ファイル、設定 UI のどれかです。重要なのは次の値です。
+This writes `youarehere-<version>.vsix`. To install it locally:
 
-```text
-command: npx
-args: -y active-context-mcp
+```bash
+code --install-extension youarehere-<version>.vsix --force
 ```
 
-## MCP ツール
+The `skills/` directory ships inside the VSIX. `notes/` is excluded by `.vscodeignore`.
 
-MCP command は次のツールを提供します。
+## License
 
-```text
-get
-```
-
-返す内容は次のとおりです。
-
-```json
-{
-  "schema": "active-context-mcp/v1",
-  "workspace": "/path/to/workspace",
-  "file": "/path/to/workspace/src/example.ts",
-  "relativeFile": "src/example.ts",
-  "cursor": {
-    "line": 10,
-    "character": 5
-  },
-  "activeLineText": "const value = example();",
-  "selection": {
-    "startLine": 10,
-    "startCharacter": 5,
-    "endLine": 10,
-    "endCharacter": 5
-  },
-  "updatedAt": "2026-07-07T10:00:00.000Z"
-}
-```
-
-## 仕組み
-
-- VS Code 拡張機能が、エディタの状態（ファイル、カーソル、選択範囲）を変更のたびに一時ファイルに書き出します。
-  - ファイル: `os.tmpdir()/active-context-mcp/active-context.json`
-- AI ツールが `get` を呼ぶと、MCP サーバーがそのファイルを読んで返します。
-
-## 必要なもの
-
-- VS Code が起動していて、この拡張機能がインストールされていること。
-- MCP クライアントから Node.js と `npx` を実行できること。
-- MCP クライアントと VS Code が同じマシン上で動いていること。
-
-## 更新タイミング
-
-- VS Code 起動後
-- アクティブエディタ変更時
-- 選択範囲変更時
-- ワークスペースフォルダ変更時
+MIT

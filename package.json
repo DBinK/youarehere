@@ -1,18 +1,18 @@
 {
-  "name": "active-context-mcp",
-  "displayName": "Active Context MCP",
-  "description": "A VS Code extension for telling MCP-compatible AI tools where you are looking in your code — which file, cursor position, and selection.",
+  "name": "youarehere",
+  "displayName": "You Are Here",
+  "description": "A VS Code extension that tells AI coding agents where you are looking in your code — which file, cursor position, and selection.",
   "version": "1.0.2",
-  "publisher": "ysd",
+  "publisher": "DBinK",
   "license": "MIT",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yuichisuzuki0601/active-context-mcp.git"
+    "url": "https://github.com/DBinK/youarehere.git"
   },
-  "homepage": "https://github.com/yuichisuzuki0601/active-context-mcp#readme",
+  "homepage": "https://github.com/DBinK/youarehere#readme",
   "bugs": {
-    "url": "https://github.com/yuichisuzuki0601/active-context-mcp/issues"
+    "url": "https://github.com/DBinK/youarehere/issues"
   },
   "keywords": [
     "ai",
@@ -20,7 +20,7 @@
     "context",
     "cursor",
     "selection",
-    "mcp"
+    "skill"
   ],
   "engines": {
     "vscode": "^1.90.0"
@@ -35,9 +35,6 @@
     "onStartupFinished"
   ],
   "main": "./extension.js",
-  "bin": {
-    "active-context-mcp": "./mcp-server.js"
-  },
   "devDependencies": {
     "@vscode/vsce": "latest"
   }
