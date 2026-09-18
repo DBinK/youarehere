@@ -72,7 +72,11 @@ function buildRef(ctx) {
     sel && !(sel.startLine === sel.endLine && sel.startCharacter === sel.endCharacter);
 
   if (hasSelection) {
-    return `${ctx.file}:${sel.startLine}-${sel.endLine}`;
+    // VS Code ranges are end-exclusive: a selection that stops at column 0 of a
+    // later line selects nothing there, so drop that terminal line.
+    const endLine =
+      sel.endCharacter === 1 && sel.endLine > sel.startLine ? sel.endLine - 1 : sel.endLine;
+    return `${ctx.file}:${sel.startLine}-${endLine}`;
   }
 
   return `${ctx.file}:${ctx.cursor ? ctx.cursor.line : 1}`;
@@ -129,10 +133,22 @@ function updateActiveContext() {
   writeState();
 }
 
+// Saving clears the dirty flag and edits can flip it without moving the caret,
+// so neither the active-editor nor the selection event covers it.
+function onDocumentChanged(document) {
+  if (document === vscode.window.activeTextEditor?.document) {
+    updateActiveContext();
+  }
+}
+
 function activate(context) {
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(updateActiveContext));
   context.subscriptions.push(vscode.window.onDidChangeTextEditorSelection(updateActiveContext));
   context.subscriptions.push(vscode.workspace.onDidChangeWorkspaceFolders(updateActiveContext));
+  context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(onDocumentChanged));
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeTextDocument((event) => onDocumentChanged(event.document)),
+  );
 
   updateActiveContext();
 }

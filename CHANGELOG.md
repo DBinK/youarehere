@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed `ref.json` citing one line too many when a selection ends at the start of the following line
+- Fixed `isDirty` staying stale after saving the active file
+
 ## [0.1.0] - 2026-09-18
 
 ### Added

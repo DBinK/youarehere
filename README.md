@@ -108,7 +108,7 @@ When nothing is selected, `selection` is a zero-width range: `startLine == endLi
 
 ## Multiple Windows
 
-The state file has a single fixed path, so concurrent VS Code windows overwrite one another. The most recently focused window wins. A `workspace` that differs from the reader's working directory is usually not a problem, since one is often a subdirectory or worktree of the other. Compare them only when they name unrelated projects.
+The state file has a single fixed path, so concurrent VS Code windows overwrite one another. The window that last changed its editor state — a different active editor, a moved cursor, or a new selection — wins; switching focus between windows alone does not update the file. A `workspace` that differs from the reader's working directory is usually not a problem, since one is often a subdirectory or worktree of the other. Compare them only when they name unrelated projects.
 
 ## Requirements
 
