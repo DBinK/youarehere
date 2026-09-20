@@ -72,8 +72,8 @@ The smallest useful view: a single reference, enough for an Agent to locate the 
 {
   "ref": "/path/to/workspace/src/example.ts:10-16",
   "isDirty": false,
-  "extensionVersion": "0.3.0",
-  "updatedAt": "2026-09-18T06:28:23.746Z"
+  "updatedAt": "2026-09-18T06:28:23.746Z",
+  "extensionVersion": "0.3.0"
 }
 ```
 
@@ -102,7 +102,8 @@ The full state, for readers that need more than a reference. This is what `youar
     "endLine": 17,
     "endCharacter": 1
   },
-  "updatedAt": "2026-09-18T06:28:23.746Z"
+  "updatedAt": "2026-09-18T06:28:23.746Z",
+  "extensionVersion": "0.3.0"
 }
 ```
 

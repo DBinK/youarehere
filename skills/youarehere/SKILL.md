@@ -27,7 +27,6 @@ If you can't read it, the extension isn't running — tell the user to install o
 ```json
 {
   "schema": "youarehere/v1",
-  "extensionVersion": "0.3.0",
   "workspace": "/path/to/workspace",
   "file": "/path/to/workspace/src/example.ts",
   "relativeFile": "src/example.ts",
@@ -35,7 +34,8 @@ If you can't read it, the extension isn't running — tell the user to install o
   "cursor": { "line": 12, "character": 5 },
   "activeLineText": "  const x = 1;",
   "selection": { "startLine": 12, "startCharacter": 1, "endLine": 14, "endCharacter": 26 },
-  "updatedAt": "2026-09-18T02:29:02.529Z"
+  "updatedAt": "2026-09-18T02:29:02.529Z",
+  "extensionVersion": "0.3.0"
 }
 ```
 

@@ -36,6 +36,7 @@
 
 - `~/.youarehere/context.json` 与 `ref.json` 由扩展写，两个都带 `extensionVersion` 与 `isDirty`
 - `schema` 保持 `youarehere/v1`。新增字段算向后兼容，读取方忽略不认识的键
+- 字段顺序：`extensionVersion` 固定放在最后，其余顺序不动，两份 README 与两个技能的示例同步
 - `extensionVersion` 取扩展自己的 `package.json` 版本，不要写死，它是技能判断自己是否落后的唯一依据
 - 改这两个文件的字段时，同步改两个技能里的 `Check the versions first` 段落与两份 README 的示例
 

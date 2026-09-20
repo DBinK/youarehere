@@ -16,8 +16,8 @@ The user's current position in VS Code is written to `~/.youarehere/ref.json`, w
 {
   "ref": "/path/to/workspace/src/example.ts:10-16",
   "isDirty": false,
-  "extensionVersion": "0.3.0",
-  "updatedAt": "2026-09-18T06:28:23.746Z"
+  "updatedAt": "2026-09-18T06:28:23.746Z",
+  "extensionVersion": "0.3.0"
 }
 ```
 

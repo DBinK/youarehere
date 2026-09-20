@@ -72,8 +72,8 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 {
   "ref": "/path/to/workspace/src/example.ts:10-16",
   "isDirty": false,
-  "extensionVersion": "0.3.0",
-  "updatedAt": "2026-09-18T06:28:23.746Z"
+  "updatedAt": "2026-09-18T06:28:23.746Z",
+  "extensionVersion": "0.3.0"
 }
 ```
 
@@ -102,7 +102,8 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
     "endLine": 17,
     "endCharacter": 1
   },
-  "updatedAt": "2026-09-18T06:28:23.746Z"
+  "updatedAt": "2026-09-18T06:28:23.746Z",
+  "extensionVersion": "0.3.0"
 }
 ```
 

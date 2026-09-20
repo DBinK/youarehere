@@ -114,8 +114,8 @@ function writeState() {
   const ref = {
     ref: buildRef(activeContext),
     isDirty: activeContext.isDirty,
-    extensionVersion: activeContext.extensionVersion,
     updatedAt: activeContext.updatedAt,
+    extensionVersion: activeContext.extensionVersion,
   };
 
   // State reporting is best-effort: a read-only home or a path conflict must
@@ -153,7 +153,6 @@ function updateActiveContext() {
 
   activeContext = {
     schema: 'youarehere/v1',
-    extensionVersion,
     workspace: workspacePath,
     file: filePath,
     relativeFile: filePath && workspacePath ? path.relative(workspacePath, filePath) : null,
@@ -162,6 +161,7 @@ function updateActiveContext() {
     activeLineText: getActiveLineText(document, editor?.selection),
     selection: toRange(editor?.selection),
     updatedAt: new Date().toISOString(),
+    extensionVersion,
   };
 
   writeState();
