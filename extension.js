@@ -12,17 +12,16 @@ const STATE_FILE = path.join(STATE_DIR, 'context.json');
 // `path:lines` cite never have to read the whole thing.
 const REF_FILE = path.join(STATE_DIR, 'ref.json');
 
-// The skills are installed from the repository, not shipped in the VSIX, so an
-// extension update leaves them behind. Both state files carry the extension
-// version and both skills compare it against their own `metadata.version`: the
-// two are numbered together, so a mismatch means the Agent is following another
-// build's instructions. The extension reports the same mismatch, once per
-// version, keyed on this field so a newer version is allowed to speak again.
-const PROMPTED_VERSION_KEY = 'youarehere.skillCheck.promptedVersion';
-const SKILL_NAMES = ['here', 'youarehere'];
-// Renamed in 0.3.0. `npx skills update` does not remove retired names, so a
-// stale copy keeps auto-triggering next to the skill that replaced it.
-const RETIRED_SKILL_NAMES = ['youarehere-full'];
+// The skills install from the repository, not from the VSIX, and the two are
+// used as a pair, so an extension update always leaves them behind. Every
+// version says so once: the first run points at the install command, later
+// versions at the update command. No detection is involved — the skills are not
+// optional, so there is nothing to check for. `globalState` carries the version
+// that already spoke, which also keeps it to one prompt per version across
+// windows.
+const PROMPTED_VERSION_KEY = 'youarehere.skills.promptedVersion';
+const INSTALL_COMMAND = 'npx skills add DBinK/youarehere -g';
+const UPDATE_COMMAND = 'npx skills update';
 
 let activeContext = null;
 let extensionVersion = null;
@@ -175,76 +174,24 @@ function onDocumentChanged(document) {
   }
 }
 
-// Where `npx skills add` puts skills. `~/.agents/skills` holds the copy every
-// other tool directory links to, the rest cover a project-level install. A
-// location we do not know about is skipped, never guessed at.
-function skillDirs() {
-  const dirs = ['.agents', '.claude'].map((dir) => path.join(os.homedir(), dir, 'skills'));
-  for (const folder of vscode.workspace.workspaceFolders ?? []) {
-    for (const dir of ['.agents', '.claude']) {
-      dirs.push(path.join(folder.uri.fsPath, dir, 'skills'));
-    }
-  }
-  return dirs;
-}
-
-// Only `metadata.version` is read, so a regex over the frontmatter is enough
-// and does not drag in a YAML dependency.
-function readSkillVersion(dir, name) {
-  try {
-    const text = fs.readFileSync(path.join(dir, name, 'SKILL.md'), 'utf8');
-    const match = text.match(/^\s+version:\s*"?([^"\n]+?)"?\s*$/m);
-    return match ? match[1].trim() : '';
-  } catch (_) {
-    return null;
-  }
-}
-
-function findInstalledSkills() {
-  const installed = new Map();
-  for (const dir of skillDirs()) {
-    for (const name of [...SKILL_NAMES, ...RETIRED_SKILL_NAMES]) {
-      if (!installed.has(name)) {
-        const version = readSkillVersion(dir, name);
-        if (version !== null) {
-          installed.set(name, version);
-        }
-      }
-    }
-  }
-  return installed;
-}
-
-// The remove step is what a plain update cannot do: `npx skills update` only
-// refreshes names the lockfile already carries, so a retired skill survives it
-// and keeps auto-triggering.
-function skillUpdateCommand(installed) {
-  if (!RETIRED_SKILL_NAMES.some((name) => installed.has(name))) {
-    return 'npx skills update';
-  }
-  return `npx skills remove ${[...installed.keys()].join(' ')} && npx skills add DBinK/youarehere -g`;
-}
-
-async function reportStaleSkills(context) {
+async function reportSkillVersion(context) {
   if (!extensionVersion) {
     return;
   }
 
-  const installed = findInstalledSkills();
-  const stale = [...installed].filter(([, version]) => version !== extensionVersion);
-  // Nothing installed, nothing out of date, or this version already spoke.
-  if (!stale.length || context.globalState.get(PROMPTED_VERSION_KEY) === extensionVersion) {
+  const prompted = context.globalState.get(PROMPTED_VERSION_KEY);
+  if (prompted === extensionVersion) {
     return;
   }
 
-  const found = stale.map(([name, version]) => `${name} ${version || '(no version)'}`).join(', ');
-  const command = skillUpdateCommand(installed);
-  const choice = await vscode.window.showWarningMessage(
-    `You Are Here is ${extensionVersion}, but the installed skills are ${found}. Update them: ${command}`,
-    'Copy update command',
-  );
+  // First run installs, every later version updates.
+  const command = prompted ? UPDATE_COMMAND : INSTALL_COMMAND;
+  const lead = prompted
+    ? `You Are Here updated to ${extensionVersion}. The bundled skills install separately, so bring them to the same version:`
+    : `You Are Here ${extensionVersion} is installed. Its two skills install once from the repository:`;
+  const choice = await vscode.window.showWarningMessage(`${lead} ${command}`, 'Copy command');
 
-  if (choice === 'Copy update command') {
+  if (choice === 'Copy command') {
     await vscode.env.clipboard.writeText(command);
   }
   // Recorded whether or not the user acted: one prompt per version.
@@ -265,8 +212,8 @@ function activate(context) {
   updateActiveContext();
 
   // Best-effort: a version prompt must never take activation down with it.
-  reportStaleSkills(context).catch((error) =>
-    console.warn('youarehere: skill version check failed:', error),
+  reportSkillVersion(context).catch((error) =>
+    console.warn('youarehere: skill version prompt failed:', error),
   );
 }
 

@@ -38,6 +38,7 @@
 - `schema` 保持 `youarehere/v1`。新增字段算向后兼容，读取方忽略不认识的键
 - 字段顺序：`extensionVersion` 固定放在最后，其余顺序不动，两份 README 与两个技能的示例同步
 - `extensionVersion` 取扩展自己的 `package.json` 版本，不要写死，它是技能判断自己是否落后的唯一依据
+- 扩展侧不检测已装 skills，也不读它们的版本：两者捆绑使用，不存在只装其一的情况。扩展只在每个版本首次激活时提示一次命令，首次给安装命令，之后给更新命令
 - 改这两个文件的字段时，同步改两个技能里的 `Check the versions first` 段落与两份 README 的示例
 
 ## skills/

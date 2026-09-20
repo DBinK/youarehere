@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added `extensionVersion` to both state files, recording which extension build wrote them so a skill can tell when it is behind
-- Added a warning when the installed skills do not match the extension version, shown once per extension version, with a button that copies the update command
+- Added a prompt on the first start of every extension version, with the install command on a first run and the update command afterwards. The extension detects nothing, because the skills and the extension are used as a pair and never installed separately
 - Added a version check section to both the `here` and `youarehere` skills: on a mismatch they ask for the skills to be updated before they read any code
 
 ### Changed

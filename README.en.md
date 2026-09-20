@@ -34,7 +34,7 @@ This extension writes the active file, cursor position and selection to a fixed 
 
    `-g` installs into the user-level skills directory of every supported Agent it detects. Omit it to install into the current project instead. If `skills` cannot install it, ask your Agent to install the skill from https://github.com/DBinK/youarehere.
 
-   The extension and the skills carry the same version number. After the extension updates, run `npx skills update` so the installed skills keep up; otherwise the Agent keeps the behavior of the older skill. For a release that renames a skill, remove the old name first with `npx skills remove`, as described in the [CHANGELOG](CHANGELOG.en.md). When the versions disagree, the extension warns once, and both skills ask for an update before they continue.
+   The extension and the skills carry the same version number. After the extension updates, run `npx skills update` so the installed skills keep up; otherwise the Agent keeps the behavior of the older skill. For a release that renames a skill, remove the old name first with `npx skills remove`, as described in the [CHANGELOG](CHANGELOG.en.md). The first start after every update offers the update command once, and both skills ask for an update when the versions disagree.
 
 3. **Point the Agent at the selection**
 
@@ -115,7 +115,7 @@ Ranges are end-exclusive, as in VS Code: a selection that stops at the start of 
 
 `isDirty` is `true` when the buffer has unsaved changes, so the file on disk may not match what is on screen.
 
-Both files carry `extensionVersion`, the version of the extension that wrote them. The bundled skills compare it with their own `metadata.version`: on a mismatch the extension warns once, and the skills ask you to update before they continue, because the two are numbered together.
+Both files carry `extensionVersion`, the version of the extension that wrote them. The bundled skills compare it with their own `metadata.version` and ask you to update before they continue when the two disagree. The extension itself checks nothing: it prompts once per version on first start, which is the install command on a first run and `npx skills update` after every update.
 
 ## Multiple Windows
 
