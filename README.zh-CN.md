@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="images/here.png" alt="You Are Here logo" width="180">
+
 # You Are Here
 
 **一个 VS Code 扩展，把你 IDE 里选中的代码交给终端里的 CLI Agent。**
