@@ -13,18 +13,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added `extensionVersion` to both state files, recording which extension build wrote them so a skill can tell when it is behind
-- Added a prompt on the first start of every extension version, with the install command on a first run and the update command afterwards. The extension detects nothing, because the skills and the extension are used as a pair and never installed separately
-- Added a version check section to both the `here` and `youarehere` skills: on a mismatch they ask for the skills to be updated before they read any code
+- Added a prompt on the first start after the extension is installed or updated: its two skills install separately and must match the extension version. It offers two buttons — Update skills now (runs the commands in a terminal) and Copy command (puts them on the clipboard) — and Cancel is not an answer, so the next start asks again. Reinstalling the same version prompts too
+- The prompt follows the editor's display language
+- Added an `extensionVersion` field to both state files, recording which extension build wrote them
 
 ### Changed
 
-- Changed `README.md` to the Chinese version and moved the English one to `README.en.md`, so the repository front page and the VS Code Marketplace listing are Chinese by default
-- **Breaking:** Renamed the `youarehere` skill to `here` and the `youarehere-full` skill to `youarehere`, so `youarehere` now names the auto-triggering skill. `/youarehere` used to point the Agent at the current selection and `/youarehere-full` held the full state; after the rename those are `/here` and `/youarehere`. Migrating takes two steps: remove the old names with `npx skills remove youarehere youarehere-full`, then install again with `npx skills add DBinK/youarehere -g`. `npx skills update` alone is not enough, because it does not clean up the `youarehere-full` left behind by the rename, and that older skill keeps auto-triggering
+- Changed `README.md` to the Chinese version and moved the English one to `README.en.md`
+- **Breaking:** Renamed the `youarehere` skill to `here` and the `youarehere-full` skill to `youarehere`, so `youarehere` now names the auto-triggering skill. Migrating takes two steps: `npx skills remove youarehere youarehere-full`, then `npx skills add DBinK/youarehere -g`. `npx skills update` alone is not enough, because the `youarehere-full` left behind by the rename keeps auto-triggering
+- Both skills now ask for the skills to be updated before they read any code when the extension version and their own disagree
 
 ### Fixed
 
-- Fixed the `cursor` and `activeLineText` values in the `context.json` example in both READMEs, so the example agrees with the end-exclusive selection rule described below it
+- Fixed the `cursor` and `activeLineText` values in the `context.json` example in both READMEs
 
 ## [0.2.1] - 2026-09-18
 
@@ -41,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Changed the state file writes to atomic write-temp-then-rename, so a reader never sees a half-written `context.json` or `ref.json`
+- State file writes are now atomic, so a reader never sees a half-written `context.json` or `ref.json`
 - Changed the `skills/` directory to no longer ship inside the VSIX; skills are installed from the repository with `npx skills add`
 - Changed the marketplace listing to lead with `IDE Selection to Your CLI Agent`, with a matching description and keywords, and replaced the extension icon
 

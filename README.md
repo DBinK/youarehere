@@ -34,7 +34,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
    `-g` 会装进检测到的每个受支持 Agent 的用户级 skills 目录；不加则装进当前项目。如果 `skills` 装不了，让 Agent 从 https://github.com/DBinK/youarehere 安装。
 
-   扩展与 skills 用同一个版本号。扩展更新后跑 `npx skills update`，让已装的 skills 跟上，否则 Agent 用的还是旧技能的行为。遇到 skill 改名的版本，要先用 `npx skills remove` 清掉旧名字，见 [CHANGELOG](CHANGELOG.md)。每次扩展更新后的首次启动都会提示一次更新命令，两个技能在版本对不上时也会先要求你更新再继续。
+   扩展与 skills 用同一个版本号。每次安装后首次启动会弹一次模态提示（重装同一个版本也算）：点「立即更新」在终端里跑 `npx skills remove` 与 `npx skills add`（先清掉改名遗留的旧技能再装回来），点「复制命令」把命令去掉 `-y` 放进剪贴板（装到哪些 Agent 由你确认，中文界面下的按钮文案就是这样，英文界面是 Update skills now 与 Copy command），点「取消」（VS Code 自己补的关闭按钮）或直接关掉则下次启动再问；提示正文里带 CHANGELOG 链接。提示按编辑器的显示语言切换中英：`vscode.env.language` 以 `zh` 开头（简体 `zh-cn` 等）就弹中文，其余弹英文。两个技能在版本对不上时也会先要求你更新，再继续。
 
 3. **让 Agent 读取选区**
 
@@ -115,7 +115,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
 缓冲区有未保存的改动时 `isDirty` 为 `true`，此时磁盘上的文件可能和屏幕上看到的不一致。
 
-两个文件都带 `extensionVersion`，记录写入它们的是哪个扩展版本。内置 skill 拿它和自己的 `metadata.version` 对比，对不上时先要求你更新 skills 再继续。扩展本身不做检测，而是每个版本首次启动时提示一次：首次是安装提示，之后每次更新提示 `npx skills update`。
+两个文件都带 `extensionVersion`，记录写入它们的是哪个扩展版本。内置 skill 拿它和自己的 `metadata.version` 对比，对不上时先要求你更新 skills 再继续。扩展本身不做检测：每次安装后首次启动提示一次，判据是扩展目录的安装时间而不是版本号，所以重装同一个版本也会再提示；首次安装只给安装命令，重装再补一条清理旧技能名的命令。
 
 ## 多窗口
 

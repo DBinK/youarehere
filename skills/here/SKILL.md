@@ -27,7 +27,7 @@ The user's current position in VS Code is written to `~/.youarehere/ref.json`, w
 
 **Do this before using the reference.** When `extensionVersion` is missing, or differs from `metadata.version`:
 
-1. Tell the user plainly that the extension is `<extensionVersion>` — or older than 0.3.0, when the field is absent — while this skill is `<metadata.version>`, and that the skill must be updated before it can be trusted. The extension shows the same warning once per version, so they may have seen it already.
+1. Tell the user plainly that the extension is `<extensionVersion>` — or older than 0.3.0, when the field is absent — while this skill is `<metadata.version>`, and that the skill must be updated before it can be trusted. The extension shows the same warning once per install, so they may have seen it already.
 2. Give them the command: `npx skills update`. If the release renamed a skill, its CHANGELOG entry carries a `npx skills remove …` step that has to run first — an update alone leaves the retired name behind, still auto-triggering.
 3. Ask them to run it now and wait for the result.
 

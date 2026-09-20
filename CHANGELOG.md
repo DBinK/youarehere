@@ -12,18 +12,18 @@
 
 ### Added
 
-- 两个状态文件新增 `extensionVersion`，记录写入它们的是哪个扩展版本，技能据此判断自己是否落后
-- 每个扩展版本首次启动时提示一次配套 skills 的命令，首次是安装、之后是更新，每个版本只提示一次，附「复制命令」按钮。扩展不做检测，因为扩展与 skills 捆绑使用，不存在只装其一的情况
-- `here` 与 `youarehere` 技能新增版本核对段：版本对不上时先要求用户更新 skills，再继续读代码
+- 装入或更新扩展后，首次启动弹一次提示：它带的两个 skills 单独安装，版本须与扩展一致。提示有两个按钮——「立即更新」在终端执行安装命令，「复制命令」把命令放进剪贴板；点「取消」不算处理，下次启动仍会提示。重装同一版本同样会提示
+- 两个状态文件新增 `extensionVersion` 字段，记录是哪个扩展版本写的
 
 ### Changed
 
-- 把 `README.md` 换成中文版，英文移到 `README.en.md`，仓库首页与 VS Code 市场页面因此默认显示中文
-- **Breaking:** 把 `youarehere` 技能改名为 `here`，`youarehere-full` 技能改名为 `youarehere`，现在 `youarehere` 指的是自动触发的那个技能。`/youarehere` 原本用于读取当前选区处的代码，`/youarehere-full` 读完整状态，改名后两者分别是 `/here` 与 `/youarehere`。迁移要两步：先 `npx skills remove youarehere youarehere-full` 清掉旧名字，再 `npx skills add DBinK/youarehere -g` 装回来。只跑 `npx skills update` 不够，它不会清理改名后遗留的 `youarehere-full`，那个旧技能会留在目录里继续自动触发
+- 把 `README.md` 换成中文版，英文移到 `README.en.md`
+- **Breaking:** 把 `youarehere` 技能改名为 `here`，`youarehere-full` 技能改名为 `youarehere`，现在 `youarehere` 是自动触发的那个。迁移要两步：先 `npx skills remove youarehere youarehere-full`，再 `npx skills add DBinK/youarehere -g`。只跑 `npx skills update` 不够，改名遗留的 `youarehere-full` 会留在目录里继续自动触发
+- 两个技能在扩展版本与自身版本不一致时，先要求更新 skills，再继续读代码
 
 ### Fixed
 
-- 修正两份 README 中 `context.json` 示例的 `cursor` 与 `activeLineText`，让示例与紧随其后的左闭右开选区规则一致
+- 修正两份 README 中 `context.json` 示例的 `cursor` 与 `activeLineText`
 
 ## [0.2.1] - 2026-09-18
 
@@ -40,7 +40,7 @@
 
 ### Changed
 
-- 状态文件改为先写临时文件再重命名，读取方不会看到写了一半的 `context.json` 或 `ref.json`
+- 状态文件改为原子写入，读取方不会看到写了一半的 `context.json` 或 `ref.json`
 - `skills/` 目录不再随 VSIX 打包，技能改为从仓库用 `npx skills add` 安装
 - 市场文案改为以 `IDE Selection to Your CLI Agent` 打头，配套修改描述与关键词，并更换扩展图标
 

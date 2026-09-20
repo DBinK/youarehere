@@ -34,7 +34,7 @@ This extension writes the active file, cursor position and selection to a fixed 
 
    `-g` installs into the user-level skills directory of every supported Agent it detects. Omit it to install into the current project instead. If `skills` cannot install it, ask your Agent to install the skill from https://github.com/DBinK/youarehere.
 
-   The extension and the skills carry the same version number. After the extension updates, run `npx skills update` so the installed skills keep up; otherwise the Agent keeps the behavior of the older skill. For a release that renames a skill, remove the old name first with `npx skills remove`, as described in the [CHANGELOG](CHANGELOG.en.md). The first start after every update offers the update command once, and both skills ask for an update when the versions disagree.
+   The extension and the skills carry the same version number. The first start after every install shows a modal prompt (reinstalling the same version counts): Update skills now runs `npx skills remove` and `npx skills add` in a terminal (the remove step clears skills that a rename retired), Copy command puts the same lines on the clipboard without `-y` so the skills CLI asks which Agents to install into, and Cancel — the close button VS Code adds itself — or closing the dialog leaves the reminder due for the next start. The prompt body carries the CHANGELOG link. The dialog follows the editor's display language: `vscode.env.language` starting with `zh` (Simplified Chinese `zh-cn` and the rest) shows Chinese, everything else shows English. Both skills also ask for an update when the versions disagree.
 
 3. **Point the Agent at the selection**
 
@@ -115,7 +115,7 @@ Ranges are end-exclusive, as in VS Code: a selection that stops at the start of 
 
 `isDirty` is `true` when the buffer has unsaved changes, so the file on disk may not match what is on screen.
 
-Both files carry `extensionVersion`, the version of the extension that wrote them. The bundled skills compare it with their own `metadata.version` and ask you to update before they continue when the two disagree. The extension itself checks nothing: it prompts once per version on first start, which is the install command on a first run and `npx skills update` after every update.
+Both files carry `extensionVersion`, the version of the extension that wrote them. The bundled skills compare it with their own `metadata.version` and ask you to update before they continue when the two disagree. The extension itself checks nothing: it prompts once on the first start after every install, keyed on the installation time of the extension directory rather than its version number, so reinstalling the same version prompts again. A first install gets the install command; a reinstall also gets the line that clears a retired skill name.
 
 ## Multiple Windows
 
