@@ -2,6 +2,12 @@
 
 本仓库的工作约定。改扩展代码、改 skill、写文档都适用。
 
+## 语言
+
+- 沟通、提交信息、PR 描述、CHANGELOG 条目用什么语言，跟随开发者当前使用的语言，不硬性规定中文或英文
+- 仓库 README 以中文为默认：`README.md` 是中文，也是 VS Code 市场页面显示的那份，英文在 `README.en.md`，两份顶部互链
+- 改 README 时两份一起改，不要只改一种语言
+
 ## 合入 main 前 bump 版本号
 
 - 任何改动交付物的 PR，都要在合入 main 之前 bump 版本，不要留到合并之后补
@@ -40,7 +46,7 @@
 
 ## 提交与 PR
 
-- 提交信息用 Conventional Commits，描述写中文，破坏性变更加 `!`。例：`refactor(skills)!: 技能改名为 here 与 youarehere`
+- 提交信息用 Conventional Commits，破坏性变更加 `!`。例：`refactor(skills)!: 技能改名为 here 与 youarehere`
 - 发布动作单独一个提交。例：`chore(release): 发布 0.3.0 并落实 CHANGELOG`
 - PR 描述按 `概述`、`主要变更`、`破坏性变更`、`验证` 组织。验证一节写实际跑过的命令和结果
 - 分支从最新 main 切出，集成分支与同步上游默认用 merge，不用 rebase
@@ -51,4 +57,4 @@
 - 扩展改动：`npm install && npm run package`，检查 `youarehere-<version>.vsix` 的文件清单，`skills/` 与 `AGENTS.md` 都不应出现
 - skill 改动：`skills-ref validate` 加真实安装一次
 - 文档改动：核对示例与实现一致，核对链接能打开
-- 发布流程（两个市场、token、发布命令）见 README 的 Release 一节，这里不重复
+- 发布流程（两个市场、token、发布命令）见 README 的「开发」一节里的「发布」，这里不重复

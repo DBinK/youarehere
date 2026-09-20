@@ -4,7 +4,7 @@
 
 # You Are Here
 
-**A VS Code extension that hands your IDE selection to the CLI Agent in your terminal.**
+**一个 VS Code 扩展，把你 IDE 里选中的代码交给终端里的 CLI Agent。**
 
 [![Stars](https://img.shields.io/github/stars/DBinK/youarehere)](https://github.com/DBinK/youarehere/stargazers)
 [![Version](https://vsmarketplacebadges.dev/version-short/DBinK.youarehere.svg)](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere)
@@ -12,59 +12,59 @@
 [![License](https://img.shields.io/github/license/DBinK/youarehere)](https://github.com/DBinK/youarehere/blob/main/LICENSE)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-compatible-blueviolet)](https://agentskills.io)
 
-**English** | [简体中文](README.zh-CN.md)
+**简体中文** | [English](README.en.md)
 
 </div>
 
-## Description
+## 简介
 
-An AI coding Agent can read any file in a project, but it cannot tell which file is open. Passing that position manually means supplying a file path and line range, or pasting the code.
+AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的是哪一个。要手动补上这个信息，就需要提供文件路径和行号区间，或者把代码粘贴过去。
 
-This extension writes the active file, cursor position and selection to a fixed path on disk, where an Agent can read it. The bundled skills are the intended interface, and they follow the [Agent Skills](https://agentskills.io) format: around 70 Agents implement it, among them Codex, Cursor, Gemini CLI, opencode, GitHub Copilot, Cline, Windsurf and Zed. It matters most with CLI Agents, which cannot see your editor; in-editor Agents can already read the selection themselves.
+这个扩展把当前文件、光标位置和选区写到一个固定路径，Agent 可以直接读。推荐用法是内置的两个 skill，它们遵循 [Agent Skills](https://agentskills.io) 格式，Codex、Cursor、Gemini CLI、opencode、GitHub Copilot、Cline、Windsurf、Zed 等约 70 个 Agent 都能用。CLI Agent 最需要它——它们看不到你的编辑器，而窗口内的 Agent 本来就能自己拿到选区。
 
-## Quick Start
+## 快速开始
 
-1. **Install the VS Code extension** — from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere) or [Open VSX](https://open-vsx.org/extension/DBinK/youarehere), or from a VSIX during development (see [Development](#development)).
+1. **安装 VS Code 扩展**——从 [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=DBinK.youarehere) 或 [Open VSX](https://open-vsx.org/extension/DBinK/youarehere) 安装，开发阶段也可以从 VSIX 装（见[开发](#开发)）。
 
-2. **Install the skills**
+2. **安装 skills**
 
    ```bash
    npx skills add DBinK/youarehere -g
    ```
 
-   `-g` installs into the user-level skills directory of every supported Agent it detects. Omit it to install into the current project instead. If `skills` cannot install it, ask your Agent to install the skill from https://github.com/DBinK/youarehere.
+   `-g` 会装进检测到的每个受支持 Agent 的用户级 skills 目录；不加则装进当前项目。如果 `skills` 装不了，让 Agent 从 https://github.com/DBinK/youarehere 安装。
 
-3. **Point the Agent at the selection**
+3. **让 Agent 读取选区**
 
-   Select code in VS Code, then pass `/here` and the question to the Agent. With [Codex](https://github.com/openai/codex):
+   在 VS Code 里选中代码，把 `/here` 和问题一起发给 Agent。以 [Codex](https://github.com/openai/codex) 为例：
 
    ```text
-   > /here why does this loop skip the last element?
+   > /here 这个循环为什么跳过最后一个元素？
 
-     Reading src/parser.ts:42-58. The loop is bounded by `i < len - 1`,
-     so the last element is never visited.
+     读了 src/parser.ts:42-58。循环上界是 `i < len - 1`，
+     所以最后一个元素永远访问不到。
    ```
 
-   The Agent resolves the position from `~/.youarehere/ref.json` and reads those lines itself.
+   Agent 从 `~/.youarehere/ref.json` 拿到位置，自己去读那几行。
 
-## Bundled skills
+## 内置 skill
 
-| Skill | Invocation | What it does |
+| Skill | 调用方式 | 行为 |
 | --- | --- | --- |
-| `here` | `/here` only | reads the code at the selection, then answers |
-| `youarehere` | automatic, or `/youarehere` | the full state below, plus how to read it |
+| `here` | 仅 `/here` | 读取选区处的代码，然后作答 |
+| `youarehere` | 自动触发，或 `/youarehere` | 完整状态，以及怎么读它 |
 
-`here` runs only when invoked by name. Use it to point the Agent at the current selection.
+`here` 只在按名字调用时运行，用来让 Agent 直接看你选中的代码。
 
-## Context Files
+## 上下文文件
 
-The extension writes two files into a fixed directory. Both use `0600`.
+扩展把两个文件写进固定目录，权限都是 `0600`。
 
-They are rewritten whenever the editor state changes: on startup, when the active editor changes, when the cursor or selection moves, when the active file is saved or edited, and when workspace folders change.
+编辑器状态变化时两个文件都会重写：启动后、活动编辑器切换时、光标或选区变化时、当前文件保存或内容变更时、工作区文件夹变化时。
 
 ### `~/.youarehere/ref.json`
 
-The smallest useful view: a single reference, enough for an Agent to locate the position.
+最精简的接口，只有一个引用，够 Agent 定位：
 
 ```json
 {
@@ -74,11 +74,11 @@ The smallest useful view: a single reference, enough for an Agent to locate the 
 }
 ```
 
-`ref` is an absolute path. What follows the last colon is either a line range (`10-16`), or a single line (`42`) when nothing is selected.
+`ref` 是绝对路径。最后一个冒号后面，要么是行号区间（`10-16`），要么是单个行号（`42`，表示没有选中任何内容）。
 
 ### `~/.youarehere/context.json`
 
-The full state, for readers that need more than a reference. This is what `youarehere` reads.
+完整状态。需要的信息比一个引用更多时读它，`youarehere` 用的就是这个。
 
 ```json
 {
@@ -102,62 +102,62 @@ The full state, for readers that need more than a reference. This is what `youar
 }
 ```
 
-Line and character numbers are 1-based.
+行号和列号都是 1-based。
 
-When nothing is selected, `selection` is a zero-width range: `startLine == endLine` and `startCharacter == endCharacter`. It is `null` only when no text editor is active (e.g. the welcome page or a webview has focus).
+没有选中内容时，`selection` 是一个零宽区间：`startLine == endLine` 且 `startCharacter == endCharacter`。只有当没有活动的文本编辑器时（比如焦点在欢迎页或 webview 上）它才是 `null`。
 
-Ranges are end-exclusive, as in VS Code: a selection that stops at the start of a line has an `endCharacter` of `1` and selects nothing on that line. That is why the `ref` above reads `10-16` while its `selection` ends at the start of line 17.
+区间和 VS Code 一样是左闭右开的：选区停在一行行首时 `endCharacter` 为 `1`，该行上没有任何内容被选中。上面 `selection` 的 `end` 落在第 17 行行首，所以实际选中到第 16 行为止，`ref` 读作 `10-16`，原因就在这里。
 
-`isDirty` is `true` when the buffer has unsaved changes, so the file on disk may not match what is on screen.
+缓冲区有未保存的改动时 `isDirty` 为 `true`，此时磁盘上的文件可能和屏幕上看到的不一致。
 
-## Multiple Windows
+## 多窗口
 
-The state file has a single fixed path, so concurrent VS Code windows overwrite one another. The window that last changed its editor state — a different active editor, a moved cursor, or a new selection — wins; switching focus between windows alone does not update the file. A `workspace` that differs from the reader's working directory is usually not a problem, since one is often a subdirectory or worktree of the other. Compare them only when they name unrelated projects.
+状态文件只有一个固定路径，多个 VS Code 窗口同时开着会互相覆盖。最后改动编辑器状态的那个窗口生效，切换活动编辑器、移动光标或选区都算，只切换窗口焦点则不会更新文件。`workspace` 和读取方的工作目录不一致通常没问题，两者往往是父子目录或 worktree 的关系。只有指向两个不相干的项目时才需要核对。
 
-## Requirements
+## 环境要求
 
-- VS Code is running with this extension installed.
-- The reader runs on the same machine as VS Code.
+- VS Code 正在运行，并且装了本扩展。
+- 读取方与 VS Code 运行在同一台机器上。
 
-## Development
+## 开发
 
-Everything lives in `extension.js`. To build the extension:
+所有源码都在 `extension.js`。构建扩展：
 
 ```bash
 npm install
 npm run package
 ```
 
-This writes `youarehere-<version>.vsix`. To install it locally:
+这会生成 `youarehere-<version>.vsix`。本地安装：
 
 ```bash
 code --install-extension youarehere-<version>.vsix --force
 ```
 
-The `skills/` directory is not part of the VSIX — install the skills from the repository as shown in [Quick Start](#quick-start).
+`skills/` 目录不随 VSIX 打包，按[快速开始](#快速开始)里的方式从仓库安装。
 
-### Release
+### 发布
 
-Every version goes to both the Visual Studio Marketplace and Open VSX. Each registry reads its own token from the environment, so export both first.
+每个版本同时发到 Visual Studio Marketplace 和 Open VSX。两个命令都从环境变量读令牌，先导出。
 
 ```bash
-export VSCE_PAT=<azure-devops-pat>   # needs the Marketplace > Manage scope
+export VSCE_PAT=<azure-devops-pat>   # 需要 Marketplace > Manage 权限
 export OVSX_PAT=<open-vsx-token>
 ```
 
-Then publish:
+然后发布：
 
 ```bash
 npm run publish:vsce
 npm run publish:ovsx
 ```
 
-Both commands package the extension from source and upload the result. The `DBinK` publisher on the Marketplace and the `DBinK` namespace on Open VSX must exist before the first publish. Create the Open VSX namespace with `npx ovsx create-namespace DBinK -p "$OVSX_PAT"`. The publish tooling needs Node.js 22 or newer.
+两个命令都会从源码打包再上传。首次发布前，Marketplace 上的 `DBinK` publisher 和 Open VSX 上的 `DBinK` namespace 必须已存在。Open VSX 建 namespace 用 `npx ovsx create-namespace DBinK -p "$OVSX_PAT"`。发布工具需要 Node.js 22 或更高版本。
 
-## Credits
+## 致谢
 
-Inspired by [yuichisuzuki0601/active-context-mcp](https://github.com/yuichisuzuki0601/active-context-mcp).
+灵感来自 [yuichisuzuki0601/active-context-mcp](https://github.com/yuichisuzuki0601/active-context-mcp)。
 
-## License
+## 许可证
 
 MIT

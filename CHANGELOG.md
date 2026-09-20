@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Changed `README.md` to the Chinese version and moved the English one to `README.en.md`, so the repository front page and the VS Code Marketplace listing are Chinese by default
 - **Breaking:** Renamed the `youarehere` skill to `here` and the `youarehere-full` skill to `youarehere`, so `youarehere` now names the auto-triggering skill. `/youarehere` used to point the Agent at the current selection and `/youarehere-full` held the full state; after the rename those are `/here` and `/youarehere`. Reinstall with `npx skills add DBinK/youarehere -g` and remove the stale `youarehere-full`, otherwise two skills claim the same name
 
 ### Fixed
@@ -21,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added the extension logo to `README.md` and `README.zh-CN.md`
+- Added the extension logo to both READMEs
 
 ## [0.2.0] - 2026-09-18
 
