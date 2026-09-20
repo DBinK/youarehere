@@ -241,14 +241,24 @@ const RETIRED_SKILL_NAMES = ['youarehere-full'];
 // in a terminal, where an interactive prompt nobody will answer must not appear,
 // while the clipboard hands them to a terminal the user is already sitting in —
 // there, dropping `-y` lets them see and answer the prompt themselves.
-function skillCommands(prompted, { yes = true } = {}) {
-  const add = `npx skills add ${PACKAGE_NAME} -g${yes ? ' -y' : ''}`;
-  if (!prompted) {
-    return [add];
-  }
+//
+// Both lines carry `-g`: the install is global, and `skills remove` defaults to
+// the project scope, where a globally installed skill is invisible. Dropping it
+// makes the removal find nothing and the retired name survive silently.
+//
+// The removal runs on every install, first ones included. A user upgrading from
+// a version that shipped a since-retired name looks exactly like a fresh install
+// here — nothing recorded an install before this release, so the stamp is unset
+// for both and the commands cannot tell them apart — and that user is the only
+// one with a retired name to lose. `skills remove` ignores names that are not
+// installed, so a genuine first install pays one extra no-op line.
+function skillCommands({ yes = true } = {}) {
+  const flags = `-g${yes ? ' -y' : ''}`;
+  const add = `npx skills add ${PACKAGE_NAME} ${flags}`;
   // Two lines rather than one `&&` chain: PowerShell 5.1 has no `&&`, and each
   // sendText is a complete command in any shell.
-  return [`npx skills remove ${[...SKILL_NAMES, ...RETIRED_SKILL_NAMES].join(' ')}`, add];
+  const remove = `npx skills remove ${[...SKILL_NAMES, ...RETIRED_SKILL_NAMES].join(' ')} ${flags}`;
+  return [remove, add];
 }
 
 async function reportSkillVersion(context) {
@@ -268,11 +278,10 @@ async function reportSkillVersion(context) {
 
   // One sentence covers every case: the version in it is always the one now
   // installed, whether that arrived as a first install, an update or a reinstall
-  // of the same version. Only the commands differ — a first install adds the
-  // skills, every later one also removes first, which is what drops a retired
-  // name a previous version left behind.
+  // of the same version. The commands do not vary with the case: remove first,
+  // which drops a retired name any previous version left behind, then add.
   const strings = messages();
-  const commands = skillCommands(prompted);
+  const commands = skillCommands();
   const update = { title: strings.update };
   const copy = { title: strings.copy };
   const lead = strings.installed(extensionVersion);
@@ -295,7 +304,7 @@ async function reportSkillVersion(context) {
   }
 
   if (choice === copy) {
-    const clipboard = skillCommands(prompted, { yes: false }).join('\n');
+    const clipboard = skillCommands({ yes: false }).join('\n');
     await vscode.env.clipboard.writeText(clipboard);
     log(`copied: ${clipboard.replace(/\n/g, ' | ')}`);
   } else {

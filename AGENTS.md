@@ -32,15 +32,36 @@
 - 底部比较链接两份同步维护。`[Unreleased]` 指向上一个 tag 到 HEAD，每个已发布版本都有对照链接
 - 每个发布版本都要有对应 tag。tag 缺失时链接就是 404，不要长期缺着
 
+## 发版
+
+开发者说「发版」时，Agent 按这个顺序做，商店上传留给人：
+
+1. **定版本号**：按上一节的 semver 规则决定 bump 到哪一档（破坏性 → minor，修复、重构、文档 → patch），改 `package.json`、`package-lock.json`、两个 `skills/*/SKILL.md` 的 `metadata.version`。四个文件用 `npm version <x.y.z> --no-git-tag-version` 加手工改 SKILL.md
+2. **落 CHANGELOG**：把 `[Unreleased]` 攒的条目落到 `## [x.y.z] - YYYY-MM-DD`（当天日期），两语言都改，顶部留一个空的 `[Unreleased]`，底部补该版本的比较链接
+3. **过门禁**：`npm run package` 后确认 VSIX 清单里没有 `skills/` 与 `AGENTS.md`；`npx skills-ref validate ./skills/here ./skills/youarehere`；五处版本号一致
+4. **合并到 main**：`git switch main && git merge --no-ff <分支>`，不用 rebase，推送 main
+5. **打 tag 并推送**：`git tag vX.Y.Z && git push origin vX.Y.Z`。tag 打在 main 上，也就是发出去的源码状态
+6. **在 main 上构建**：`npm run package`，产物 `youarehere-X.Y.Z.vsix`。构建要在 tag 之后，产物才对得上 tag
+7. **建 GitHub release**，notes 取该版本的 CHANGELOG 段：
+   ```bash
+   V=X.Y.Z
+   awk -v v="$V" 'index($0, "## [" v "]") == 1 {f=1; next} /^## \[/ {f=0} f' CHANGELOG.md > /tmp/notes.md
+   gh release create "v$V" "youarehere-$V.vsix" --title "v$V" --notes-file /tmp/notes.md
+   ```
+   v0.2.1 及更早的 release 只有自动生成的 PR 列表、没挂产物；从 0.3.0 起 notes 用 CHANGELOG 段并附上 VSIX
+8. **商店由人工上传**：Marketplace 与 Open VSX 的命令、令牌见 README 的「发布」一节。Agent 不执行 `vsce publish` 与 `ovsx publish`，也不碰这两个令牌
+
+发完版回到分支继续干活，版本号已经在 main 上，后续改动按下一档继续 bump。
+
 ## 状态文件
 
 - `~/.youarehere/context.json` 与 `ref.json` 由扩展写，两个都带 `extensionVersion` 与 `isDirty`
 - `schema` 保持 `youarehere/v1`。新增字段算向后兼容，读取方忽略不认识的键
 - 字段顺序：`extensionVersion` 固定放在最后，其余顺序不动，两份 README 与两个技能的示例同步
 - `extensionVersion` 取扩展自己的 `package.json` 版本，不要写死，它是技能判断自己是否落后的唯一依据
-- 扩展侧不检测已装 skills，也不读它们的版本：两者捆绑使用，不存在只装其一的情况。扩展只在每次安装后首次激活时提示一次命令，判据是扩展目录的安装时间（`fs.statSync(context.extension.extensionPath).mtimeMs`）而不是版本号，重装同一个版本也会弹；首次安装给安装命令，重装再补一条清理旧技能名的命令
+- 扩展侧不检测已装 skills，也不读它们的版本：两者捆绑使用，不存在只装其一的情况。扩展只在每次安装后首次激活时提示一次命令，判据是扩展目录的安装时间（`fs.statSync(context.extension.extensionPath).mtimeMs`）而不是版本号，重装同一个版本也会弹；按钮不分首次还是重装，一律先 `npx skills remove` 清掉退场的旧技能名，再 `npx skills add` 装回来。两条命令的 `-g` 必须一致：`skills remove` 默认项目作用域，少了它删不掉全局装的旧技能（全新安装时 remove 只是空操作）
 - 改这两个文件的字段时，同步改两个技能里的 `Check the versions first` 段落与两份 README 的示例
-- 提示没弹时这样查：读 profile 的 `state.vscdb`（键 `DBinK.youarehere`）里的 `youarehere.skills.promptedInstall`，和扩展目录 mtime 比对。相等 = 这次安装已处理；不等 = 该弹。扩展用 `console.log` 写的诊断行不会进 `exthost.log`（默认级别过滤），别指望从日志文件里看到它
+- 提示没弹时这样查：读 profile 的 `state.vscdb`（键 `DBinK.youarehere`）里的 `youarehere.skills.promptedInstall`，和扩展目录 mtime 比对。相等 = 这次安装已处理；不等 = 该弹。扩展的诊断走 `log()`（「You Are Here」输出频道），落盘在 `logs/<session>/window*/exthost/output_logging_*/<n>-You Are Here.log`，排障直接看它；`console.log` 的输出不会进 `exthost.log`（默认级别过滤），别指望
 
 ## skills/
 
@@ -57,7 +78,7 @@
 - 再真装一次确认名字派生正确：`npx skills add <仓库路径>`，本地路径即可，不必先推送
 - `skills/` 不进 VSIX（见 `.vscodeignore`），用户通过 `npx skills add DBinK/youarehere -g` 安装
 - 改名或删除 skill 属于对外破坏性变更：bump 版本，CHANGELOG 记 `**Breaking:**`，并给出完整迁移序列。实测 `npx skills update` 不会清理改名后遗留的旧名字，旧技能会留在 Agent 的 skills 目录里继续触发
-- 改名的旧名字必须加进 `extension.js` 的 `RETIRED_SKILL_NAMES`：提示里的更新按钮（中文「立即更新」/英文 Update skills now）先执行 `npx skills remove` 再 `npx skills add`，靠这个列表清理遗留技能
+- 不再使用的旧名字必须加进 `extension.js` 的 `RETIRED_SKILL_NAMES`；被新技能复用的旧名字留在 `SKILL_NAMES`（更新按钮按 `SKILL_NAMES + RETIRED_SKILL_NAMES` 一起删）。提示里的更新按钮（中文「立即更新」/英文 Update skills now）先执行 `npx skills remove` 再 `npx skills add`，靠这两份列表清理遗留技能
 
 ## 提交与 PR
 
@@ -68,9 +89,9 @@
 
 ## 验证
 
-- 版本一致性：每次 bump 后核对 `package.json`、两个 `SKILL.md` 的 `metadata.version`、两个 CHANGELOG 的版本段，四处必须相同
+- 版本一致性：每次 bump 后核对 `package.json`、`package-lock.json`、两个 `SKILL.md` 的 `metadata.version`、两个 CHANGELOG 的版本段，五处必须相同
 - 扩展改动：`npm install && npm run package`，检查 `youarehere-<version>.vsix` 的文件清单，`skills/` 与 `AGENTS.md` 都不应出现
-- 扩展逻辑改动：另用 stub 的 `vscode` 模块跑一遍 `activate`，检查 `context.json` 与 `ref.json` 的字段、模态提示的三个按钮行为（Update skills now 建终端并 `sendText`，Copy command 调 `env.clipboard.writeText` 且内容不带 `-y`，关闭按钮由 VS Code 自己补（扩展不传 `isCloseAffordance`），它不记录因而不算回答）、中英两套文案（`vscode.env.language` 以 `zh` 开头用中文，其余用英文）与 `log()` 写入的输出频道行、以及提示是否每次安装后只触发一次（判据是扩展目录 mtime，见上）。stub 需要覆盖 `window`（含 `createTerminal`）、`workspace`、`env.clipboard` 与 `globalState`（用 Map 模拟），`os.homedir` 指向临时目录以免写到真实状态文件，扩展目录用临时目录以便用 `fs.utimesSync` 模拟重装
+- 扩展逻辑改动：另用 stub 的 `vscode` 模块跑一遍 `activate`，检查 `context.json` 与 `ref.json` 的字段、模态提示的三个按钮行为（Update skills now 建终端并 `sendText`，Copy command 调 `env.clipboard.writeText` 且内容不带 `-y`（两种按钮给出的两条命令都带 `-g`），关闭按钮由 VS Code 自己补（扩展不传 `isCloseAffordance`），它不记录因而不算回答）、中英两套文案（`vscode.env.language` 以 `zh` 开头用中文，其余用英文）与 `log()` 写入的输出频道行、以及提示是否每次安装后只触发一次（判据是扩展目录 mtime，见上）。stub 需要覆盖 `window`（含 `createTerminal`）、`workspace`、`env.clipboard` 与 `globalState`（用 Map 模拟），`os.homedir` 指向临时目录以免写到真实状态文件，扩展目录用临时目录以便用 `fs.utimesSync` 模拟重装
 - skill 改动：`skills-ref validate` 加真实安装一次
 - 文档改动：核对示例与实现一致，核对链接能打开
 - 发布流程（两个市场、token、发布命令）见 README 的「开发」一节里的「发布」，这里不重复

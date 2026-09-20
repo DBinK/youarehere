@@ -13,19 +13,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added a prompt on the first start after the extension is installed or updated: its two skills install separately and must match the extension version. It offers two buttons — Update skills now (runs the commands in a terminal) and Copy command (puts them on the clipboard) — and Cancel is not an answer, so the next start asks again. Reinstalling the same version prompts too
+- Added a prompt on the first start after the extension is installed or updated: its two skills install separately and must match the extension version. It offers two buttons — Update skills now (runs the commands in a terminal) and Copy command (puts them on the clipboard) — and both clear a retired skill name before installing the current ones; Cancel is not an answer, so the next start asks again. Reinstalling the same version prompts too
 - The prompt follows the editor's display language
 - Added an `extensionVersion` field to both state files, recording which extension build wrote them
 
 ### Changed
 
-- Changed `README.md` to the Chinese version and moved the English one to `README.en.md`
+- Changed `README.md` and `CHANGELOG.md` to the Chinese version, moving the English ones to `README.en.md` and `CHANGELOG.en.md`
 - **Breaking:** Renamed the `youarehere` skill to `here` and the `youarehere-full` skill to `youarehere`, so `youarehere` now names the auto-triggering skill. Migrating takes two steps: `npx skills remove youarehere youarehere-full`, then `npx skills add DBinK/youarehere -g`. `npx skills update` alone is not enough, because the `youarehere-full` left behind by the rename keeps auto-triggering
-- Both skills now ask for the skills to be updated before they read any code when the extension version and their own disagree
+- Both skills now stop on a version mismatch: a missing `extensionVersion` means the extension predates 0.3.0 and must be updated, while a differing one means the skills must; only then do they read any code
 
 ### Fixed
 
-- Fixed the `cursor` and `activeLineText` values in the `context.json` example in both READMEs
+- Fixed the `cursor` and `activeLineText` values in the `context.json` example in both READMEs and in the `youarehere` skill
 
 ## [0.2.1] - 2026-09-18
 

@@ -12,18 +12,19 @@
 
 ### Added
 
-- 装入或更新扩展后，首次启动弹一次提示：它带的两个 skills 单独安装，版本须与扩展一致。提示有两个按钮——「立即更新」在终端执行安装命令，「复制命令」把命令放进剪贴板；点「取消」不算处理，下次启动仍会提示。重装同一版本同样会提示
+- 装入或更新扩展后，首次启动弹一次提示：它带的两个 skills 单独安装，版本须与扩展一致。提示有两个按钮——「立即更新」在终端执行安装命令，「复制命令」把命令放进剪贴板；两个按钮都先清掉退场的旧技能名，再装回当前版本；点「取消」不算处理，下次启动仍会提示。重装同一版本同样会提示
+- 提示文案跟随编辑器的显示语言：`vscode.env.language` 以 `zh` 开头（简体 `zh-cn` 等）用中文，其余用英文
 - 两个状态文件新增 `extensionVersion` 字段，记录是哪个扩展版本写的
 
 ### Changed
 
-- 把 `README.md` 换成中文版，英文移到 `README.en.md`
+- 把 `README.md` 与 `CHANGELOG.md` 换成中文版，英文分别是 `README.en.md` 与 `CHANGELOG.en.md`
 - **Breaking:** 把 `youarehere` 技能改名为 `here`，`youarehere-full` 技能改名为 `youarehere`，现在 `youarehere` 是自动触发的那个。迁移要两步：先 `npx skills remove youarehere youarehere-full`，再 `npx skills add DBinK/youarehere -g`。只跑 `npx skills update` 不够，改名遗留的 `youarehere-full` 会留在目录里继续自动触发
-- 两个技能在扩展版本与自身版本不一致时，先要求更新 skills，再继续读代码
+- 两个技能在版本对不上时先停下：`extensionVersion` 缺失说明扩展低于 0.3.0，要求更新扩展；字段存在但不相等的才要求更新 skills，然后继续读代码
 
 ### Fixed
 
-- 修正两份 README 中 `context.json` 示例的 `cursor` 与 `activeLineText`
+- 修正两份 README 与 `youarehere` 技能中 `context.json` 示例的 `cursor` 与 `activeLineText`
 
 ## [0.2.1] - 2026-09-18
 

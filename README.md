@@ -34,7 +34,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
    `-g` 会装进检测到的每个受支持 Agent 的用户级 skills 目录；不加则装进当前项目。如果 `skills` 装不了，让 Agent 从 https://github.com/DBinK/youarehere 安装。
 
-   扩展与 skills 用同一个版本号。每次安装后首次启动会弹一次模态提示（重装同一个版本也算）：点「立即更新」在终端里跑 `npx skills remove` 与 `npx skills add`（先清掉改名遗留的旧技能再装回来），点「复制命令」把命令去掉 `-y` 放进剪贴板（装到哪些 Agent 由你确认，中文界面下的按钮文案就是这样，英文界面是 Update skills now 与 Copy command），点「取消」（VS Code 自己补的关闭按钮）或直接关掉则下次启动再问；提示正文里带 CHANGELOG 链接。提示按编辑器的显示语言切换中英：`vscode.env.language` 以 `zh` 开头（简体 `zh-cn` 等）就弹中文，其余弹英文。两个技能在版本对不上时也会先要求你更新，再继续。
+   扩展与 skills 用同一个版本号。装完首次启动会弹一个提示，点「立即更新」把 skills 对齐到这个版本即可；细节见[版本提示](#版本提示)。
 
 3. **让 Agent 读取选区**
 
@@ -57,6 +57,15 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 | `youarehere` | 自动触发，或 `/youarehere` | 完整状态，以及怎么读它 |
 
 `here` 只在按名字调用时运行，用来让 Agent 直接看你选中的代码。
+
+## 版本提示
+
+扩展与 skills 用同一个版本号，两者捆绑使用，所以装入或更新扩展后首次启动会弹一次提示，让你把 skills 对齐到当前版本。判据是扩展目录的安装时间而不是版本号，重装同一个版本也会弹。
+
+- **立即更新**：在终端里先跑 `npx skills remove`，清掉退场的旧技能名，再跑 `npx skills add` 装回当前版本
+- **复制命令**：把同样的两行去掉 `-y` 放进剪贴板，装到哪些 Agent 由你确认
+- **取消**（VS Code 自己补的关闭按钮）或直接关掉不算处理过，下次启动再问
+- 提示按编辑器的显示语言切换：`vscode.env.language` 以 `zh` 开头（简体 `zh-cn` 等）弹中文，其余弹英文；正文里带 CHANGELOG 链接
 
 ## 上下文文件
 
@@ -86,7 +95,6 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 ```json
 {
   "schema": "youarehere/v1",
-  "extensionVersion": "0.3.0",
   "workspace": "/path/to/workspace",
   "file": "/path/to/workspace/src/example.ts",
   "relativeFile": "src/example.ts",
@@ -115,7 +123,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
 缓冲区有未保存的改动时 `isDirty` 为 `true`，此时磁盘上的文件可能和屏幕上看到的不一致。
 
-两个文件都带 `extensionVersion`，记录写入它们的是哪个扩展版本。内置 skill 拿它和自己的 `metadata.version` 对比，对不上时先要求你更新 skills 再继续。扩展本身不做检测：每次安装后首次启动提示一次，判据是扩展目录的安装时间而不是版本号，所以重装同一个版本也会再提示；首次安装只给安装命令，重装再补一条清理旧技能名的命令。
+两个文件都带 `extensionVersion`，记录写入它们的是哪个扩展版本。内置 skill 拿它和自己的 `metadata.version` 对比，不一致就先要求统一版本再继续读代码（字段缺失说明扩展太旧，要更新的是扩展；字段不相等则更新 skills）；扩展自身不读 skill 的版本，只靠安装后那次提示提醒。
 
 ## 多窗口
 

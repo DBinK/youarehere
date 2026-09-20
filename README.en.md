@@ -34,7 +34,7 @@ This extension writes the active file, cursor position and selection to a fixed 
 
    `-g` installs into the user-level skills directory of every supported Agent it detects. Omit it to install into the current project instead. If `skills` cannot install it, ask your Agent to install the skill from https://github.com/DBinK/youarehere.
 
-   The extension and the skills carry the same version number. The first start after every install shows a modal prompt (reinstalling the same version counts): Update skills now runs `npx skills remove` and `npx skills add` in a terminal (the remove step clears skills that a rename retired), Copy command puts the same lines on the clipboard without `-y` so the skills CLI asks which Agents to install into, and Cancel — the close button VS Code adds itself — or closing the dialog leaves the reminder due for the next start. The prompt body carries the CHANGELOG link. The dialog follows the editor's display language: `vscode.env.language` starting with `zh` (Simplified Chinese `zh-cn` and the rest) shows Chinese, everything else shows English. Both skills also ask for an update when the versions disagree.
+   The extension and the skills carry the same version number. The first start shows a prompt: click Update skills now to bring the skills to this version, with the details under [Version Prompt](#version-prompt).
 
 3. **Point the Agent at the selection**
 
@@ -57,6 +57,15 @@ This extension writes the active file, cursor position and selection to a fixed 
 | `youarehere` | automatic, or `/youarehere` | the full state below, plus how to read it |
 
 `here` runs only when invoked by name. Use it to point the Agent at the current selection.
+
+## Version Prompt
+
+The extension and the skills carry the same version number and are used as a pair, so the first start after the extension is installed or updated shows a prompt asking you to bring the skills to that version. It is keyed on the installation time of the extension directory rather than its version number, so reinstalling the same version prompts again.
+
+- **Update skills now** runs `npx skills remove` in a terminal to clear skill names that a release retired, then `npx skills add` to install the current ones
+- **Copy command** puts the same two lines on the clipboard without `-y`, so the skills CLI asks which Agents to install into
+- **Cancel** — the close button VS Code adds itself — and closing the dialog do not count as answering, so the next start asks again
+- The prompt follows the editor's display language: `vscode.env.language` starting with `zh` shows Chinese, everything else shows English; its body carries the CHANGELOG link
 
 ## Context Files
 
@@ -86,7 +95,6 @@ The full state, for readers that need more than a reference. This is what `youar
 ```json
 {
   "schema": "youarehere/v1",
-  "extensionVersion": "0.3.0",
   "workspace": "/path/to/workspace",
   "file": "/path/to/workspace/src/example.ts",
   "relativeFile": "src/example.ts",
@@ -115,7 +123,7 @@ Ranges are end-exclusive, as in VS Code: a selection that stops at the start of 
 
 `isDirty` is `true` when the buffer has unsaved changes, so the file on disk may not match what is on screen.
 
-Both files carry `extensionVersion`, the version of the extension that wrote them. The bundled skills compare it with their own `metadata.version` and ask you to update before they continue when the two disagree. The extension itself checks nothing: it prompts once on the first start after every install, keyed on the installation time of the extension directory rather than its version number, so reinstalling the same version prompts again. A first install gets the install command; a reinstall also gets the line that clears a retired skill name.
+Both files carry `extensionVersion`, the version of the extension that wrote them. The bundled skills compare it with their own `metadata.version` and stop on a mismatch until the two agree — a missing field means the extension is the outdated half, a differing one means the skills are; the extension itself reads no skill version, relying on the install-time prompt described in [Quick Start](#quick-start).
 
 ## Multiple Windows
 

@@ -31,8 +31,8 @@ If you can't read it, the extension isn't running — tell the user to install o
   "file": "/path/to/workspace/src/example.ts",
   "relativeFile": "src/example.ts",
   "isDirty": false,
-  "cursor": { "line": 12, "character": 5 },
-  "activeLineText": "  const x = 1;",
+  "cursor": { "line": 14, "character": 26 },
+  "activeLineText": "  const parsed = parse(source);",
   "selection": { "startLine": 12, "startCharacter": 1, "endLine": 14, "endCharacter": 26 },
   "updatedAt": "2026-09-18T02:29:02.529Z",
   "extensionVersion": "0.3.0"
@@ -47,11 +47,10 @@ Use `file` for the path — it's absolute, readable from any working directory. 
 
 `context.json` carries `extensionVersion`, this skill carries `metadata.version`. The two are numbered together on purpose, so a mismatch means these instructions were written for a different build of the extension.
 
-**Do this before answering anything about the current code.** When `extensionVersion` is missing, or differs from `metadata.version`:
+**Do this before answering anything about the current code.**
 
-1. Tell the user plainly that the extension is `<extensionVersion>` — or older than 0.3.0, when the field is absent — while this skill is `<metadata.version>`, and that the skill must be updated before it can be trusted. The extension shows the same warning once per install, so they may have seen it already.
-2. Give them the command: `npx skills update`. If the release renamed a skill, its CHANGELOG entry carries a `npx skills remove …` step that has to run first — an update alone leaves the retired name behind, still auto-triggering.
-3. Ask them to run it now and wait for the result.
+- `extensionVersion` is **missing**: the file was written by an extension older than 0.3.0, while this skill is `<metadata.version>` — here the skill is the newer half, so `npx skills update` would change nothing. Tell the user their extension predates 0.3.0 and has to be updated, then wait. Restarting VS Code makes the current extension rewrite both files, so a stale one clears itself once the updated extension is running.
+- `extensionVersion` is **present and differs** from `metadata.version`: the extension is the newer half. Tell the user the extension is `<extensionVersion>` while this skill is `<metadata.version>`, and that the skill must be updated before it can be trusted; the extension shows its own reminder once per install, so they may have seen it already. Give them the command: `npx skills update`. If the release renamed a skill, its CHANGELOG entry carries a `npx skills remove …` step that has to run first — an update alone leaves the retired name behind, still auto-triggering. Ask them to run it now and wait for the result.
 
 Do not read the selection and do not answer the code question while the versions disagree. Continue without an update only if the user explicitly tells you to, and then state once that the instructions may be stale for the running extension.
 
