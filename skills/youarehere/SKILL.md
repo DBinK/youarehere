@@ -2,7 +2,7 @@
 name: youarehere
 description: Read the code the user is currently looking at in VS Code. Use when the user refers to "this code", "here", "what I've selected", "the current file", "at the cursor", or "what I'm looking at", or asks a code question without naming a location (and they're likely looking at code). Do not use when the user has already given a file path or pasted the code.
 license: MIT
-compatibility: Requires the youarehere VS Code extension (VS Code 1.90 or later) running on the same machine. It writes ~/.youarehere/context.json with schema youarehere/v1.
+compatibility: Requires the "You Are Here" extension for VS Code (DBinK.youarehere, VS Code 1.90 or later) running on the same machine. It writes ~/.youarehere/context.json with schema youarehere/v1.
 metadata:
   author: DBinK
   version: "0.3.0"
@@ -10,7 +10,7 @@ metadata:
 
 # Read the current VS Code selection
 
-The user's current file, cursor position and selection in VS Code are written in real time to a JSON file by the `youarehere` extension. **Just read that file — there's no need to write a script to parse it.**
+The user's current file, cursor position and selection in VS Code are written in real time to a JSON file by the "You Are Here" extension (`DBinK.youarehere`). **Just read that file — there's no need to write a script to parse it.**
 
 ## Where the file is
 
@@ -20,7 +20,7 @@ It's a fixed path, read it directly:
 ~/.youarehere/context.json
 ```
 
-If you can't read it, the extension isn't running — tell the user to install or launch the `youarehere` extension.
+If you can't read it, the extension isn't running — tell the user to install or launch the "You Are Here" extension (`DBinK.youarehere`).
 
 ## What it looks like
 

@@ -2,7 +2,7 @@
 name: here
 description: Read the user's current position in VS Code (file + line range), then read that code. Only invoke when the user explicitly types /here — do not trigger it from conversation context.
 license: MIT
-compatibility: Requires the youarehere VS Code extension (VS Code 1.90 or later) running on the same machine. It writes ~/.youarehere/ref.json.
+compatibility: Requires the "You Are Here" extension for VS Code (DBinK.youarehere, VS Code 1.90 or later) running on the same machine. It writes ~/.youarehere/ref.json.
 metadata:
   author: DBinK
   version: "0.3.0"
@@ -34,4 +34,4 @@ It's also worth mentioning if `updatedAt` is clearly stale (minutes old, while t
 
 `ref: null` means the active editor isn't a real file — a diff view, the Source Control panel, an output panel. You have no file path; tell the user to select code in a real file.
 
-If `ref.json` doesn't exist, the extension isn't running — tell the user to install or launch the `youarehere` extension.
+If `ref.json` doesn't exist, the extension isn't running — tell the user to install or launch the "You Are Here" extension (`DBinK.youarehere`).

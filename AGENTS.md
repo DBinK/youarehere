@@ -29,7 +29,7 @@
 - frontmatter 字段固定这几项，与仓库现状保持一致：
   - `description`：写清做什么、什么时候用，这是触发机制，改它要谨慎
   - `license: MIT`
-  - `compatibility`：写清技能的前提，即本机运行 youarehere VS Code 扩展，并写明最低 VS Code 版本
+  - `compatibility`：写清技能的前提，即本机运行 "You Are Here" 扩展（ID `DBinK.youarehere`），并写明最低 VS Code 版本。对用户提起扩展时用市场显示名加 ID，因为市场与 VS Code 扩展面板里显示的是 `displayName`，不是 `youarehere`
   - `metadata.author: DBinK`
   - `metadata.version`：跟随扩展版本，与 `package.json` 相同
 - 不用 `allowed-tools`：规范标注为 experimental，各客户端解释不一致
