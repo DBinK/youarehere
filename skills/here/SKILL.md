@@ -10,15 +10,28 @@ metadata:
 
 # Output the VS Code selection reference
 
-The user's current position in VS Code is written to `~/.youarehere/ref.json`, which has exactly three fields:
+The user's current position in VS Code is written to `~/.youarehere/ref.json`, which has exactly four fields:
 
 ```json
 {
   "ref": "/path/to/workspace/src/example.ts:10-16",
   "isDirty": false,
+  "extensionVersion": "0.3.0",
   "updatedAt": "2026-09-18T06:28:23.746Z"
 }
 ```
+
+## Check the versions first
+
+`ref.json` carries `extensionVersion`, this skill carries `metadata.version`. The two are numbered together on purpose, so a mismatch means these instructions were written for a different build of the extension.
+
+**Do this before using the reference.** When `extensionVersion` is missing, or differs from `metadata.version`:
+
+1. Tell the user plainly that the extension is `<extensionVersion>` — or older than 0.3.0, when the field is absent — while this skill is `<metadata.version>`, and that the skill must be updated before it can be trusted. The extension shows the same warning once per version, so they may have seen it already.
+2. Give them the command: `npx skills update`. If the release renamed a skill, its CHANGELOG entry carries a `npx skills remove …` step that has to run first — an update alone leaves the retired name behind, still auto-triggering.
+3. Ask them to run it now and wait for the result.
+
+Do not read the selection and do not answer the code question while the versions disagree. Continue without an update only if the user explicitly tells you to, and then state once that the instructions may be stale for the running extension.
 
 ## Notes
 

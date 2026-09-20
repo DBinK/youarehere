@@ -34,7 +34,7 @@ This extension writes the active file, cursor position and selection to a fixed 
 
    `-g` installs into the user-level skills directory of every supported Agent it detects. Omit it to install into the current project instead. If `skills` cannot install it, ask your Agent to install the skill from https://github.com/DBinK/youarehere.
 
-   The extension and the skills carry the same version number. After the extension updates, run `npx skills update` so the installed skills keep up; otherwise the Agent keeps the behavior of the older skill. For a release that renames a skill, remove the old name first with `npx skills remove`, as described in the [CHANGELOG](CHANGELOG.en.md).
+   The extension and the skills carry the same version number. After the extension updates, run `npx skills update` so the installed skills keep up; otherwise the Agent keeps the behavior of the older skill. For a release that renames a skill, remove the old name first with `npx skills remove`, as described in the [CHANGELOG](CHANGELOG.en.md). When the versions disagree, the extension warns once, and both skills ask for an update before they continue.
 
 3. **Point the Agent at the selection**
 
@@ -72,6 +72,7 @@ The smallest useful view: a single reference, enough for an Agent to locate the 
 {
   "ref": "/path/to/workspace/src/example.ts:10-16",
   "isDirty": false,
+  "extensionVersion": "0.3.0",
   "updatedAt": "2026-09-18T06:28:23.746Z"
 }
 ```
@@ -85,6 +86,7 @@ The full state, for readers that need more than a reference. This is what `youar
 ```json
 {
   "schema": "youarehere/v1",
+  "extensionVersion": "0.3.0",
   "workspace": "/path/to/workspace",
   "file": "/path/to/workspace/src/example.ts",
   "relativeFile": "src/example.ts",
@@ -111,6 +113,8 @@ When nothing is selected, `selection` is a zero-width range: `startLine == endLi
 Ranges are end-exclusive, as in VS Code: a selection that stops at the start of a line has an `endCharacter` of `1` and selects nothing on that line. That is why the `ref` above reads `10-16` while its `selection` ends at the start of line 17.
 
 `isDirty` is `true` when the buffer has unsaved changes, so the file on disk may not match what is on screen.
+
+Both files carry `extensionVersion`, the version of the extension that wrote them. The bundled skills compare it with their own `metadata.version`: on a mismatch the extension warns once, and the skills ask you to update before they continue, because the two are numbered together.
 
 ## Multiple Windows
 

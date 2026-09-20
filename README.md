@@ -34,7 +34,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
    `-g` 会装进检测到的每个受支持 Agent 的用户级 skills 目录；不加则装进当前项目。如果 `skills` 装不了，让 Agent 从 https://github.com/DBinK/youarehere 安装。
 
-   扩展与 skills 用同一个版本号。扩展更新后跑 `npx skills update`，让已装的 skills 跟上，否则 Agent 用的还是旧技能的行为。遇到 skill 改名的版本，要先用 `npx skills remove` 清掉旧名字，见 [CHANGELOG](CHANGELOG.md)。
+   扩展与 skills 用同一个版本号。扩展更新后跑 `npx skills update`，让已装的 skills 跟上，否则 Agent 用的还是旧技能的行为。遇到 skill 改名的版本，要先用 `npx skills remove` 清掉旧名字，见 [CHANGELOG](CHANGELOG.md)。版本对不上时扩展会提示一次，两个技能也会先要求你更新再继续。
 
 3. **让 Agent 读取选区**
 
@@ -72,6 +72,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 {
   "ref": "/path/to/workspace/src/example.ts:10-16",
   "isDirty": false,
+  "extensionVersion": "0.3.0",
   "updatedAt": "2026-09-18T06:28:23.746Z"
 }
 ```
@@ -85,6 +86,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 ```json
 {
   "schema": "youarehere/v1",
+  "extensionVersion": "0.3.0",
   "workspace": "/path/to/workspace",
   "file": "/path/to/workspace/src/example.ts",
   "relativeFile": "src/example.ts",
@@ -111,6 +113,8 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 区间和 VS Code 一样是左闭右开的：选区停在一行行首时 `endCharacter` 为 `1`，该行上没有任何内容被选中。上面 `selection` 的 `end` 落在第 17 行行首，所以实际选中到第 16 行为止，`ref` 读作 `10-16`，原因就在这里。
 
 缓冲区有未保存的改动时 `isDirty` 为 `true`，此时磁盘上的文件可能和屏幕上看到的不一致。
+
+两个文件都带 `extensionVersion`，记录写入它们的是哪个扩展版本。内置 skill 拿它和自己的 `metadata.version` 对比：版本不一致时扩展会提示一次，技能也会先要求更新 skills 再继续，因为技能与扩展用同一个版本号。
 
 ## 多窗口
 

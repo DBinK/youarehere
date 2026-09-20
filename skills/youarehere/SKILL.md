@@ -27,6 +27,7 @@ If you can't read it, the extension isn't running — tell the user to install o
 ```json
 {
   "schema": "youarehere/v1",
+  "extensionVersion": "0.3.0",
   "workspace": "/path/to/workspace",
   "file": "/path/to/workspace/src/example.ts",
   "relativeFile": "src/example.ts",
@@ -41,6 +42,18 @@ If you can't read it, the extension isn't running — tell the user to install o
 Line and character numbers are **1-based** — use them directly, no conversion needed.
 
 Use `file` for the path — it's absolute, readable from any working directory. `relativeFile` is the workspace-relative version and is `null` when the user hasn't opened a folder; don't use it.
+
+## Check the versions first
+
+`context.json` carries `extensionVersion`, this skill carries `metadata.version`. The two are numbered together on purpose, so a mismatch means these instructions were written for a different build of the extension.
+
+**Do this before answering anything about the current code.** When `extensionVersion` is missing, or differs from `metadata.version`:
+
+1. Tell the user plainly that the extension is `<extensionVersion>` — or older than 0.3.0, when the field is absent — while this skill is `<metadata.version>`, and that the skill must be updated before it can be trusted. The extension shows the same warning once per version, so they may have seen it already.
+2. Give them the command: `npx skills update`. If the release renamed a skill, its CHANGELOG entry carries a `npx skills remove …` step that has to run first — an update alone leaves the retired name behind, still auto-triggering.
+3. Ask them to run it now and wait for the result.
+
+Do not read the selection and do not answer the code question while the versions disagree. Continue without an update only if the user explicitly tells you to, and then state once that the instructions may be stale for the running extension.
 
 ## Five things that are easy to misread
 

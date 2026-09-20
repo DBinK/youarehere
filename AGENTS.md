@@ -32,6 +32,13 @@
 - 底部比较链接两份同步维护。`[Unreleased]` 指向上一个 tag 到 HEAD，每个已发布版本都有对照链接
 - 每个发布版本都要有对应 tag。tag 缺失时链接就是 404，不要长期缺着
 
+## 状态文件
+
+- `~/.youarehere/context.json` 与 `ref.json` 由扩展写，两个都带 `extensionVersion` 与 `isDirty`
+- `schema` 保持 `youarehere/v1`。新增字段算向后兼容，读取方忽略不认识的键
+- `extensionVersion` 取扩展自己的 `package.json` 版本，不要写死，它是技能判断自己是否落后的唯一依据
+- 改这两个文件的字段时，同步改两个技能里的 `Check the versions first` 段落与两份 README 的示例
+
 ## skills/
 
 - 位置 `skills/<name>/SKILL.md`，遵循 Agent Skills 格式
@@ -59,6 +66,7 @@
 
 - 版本一致性：每次 bump 后核对 `package.json`、两个 `SKILL.md` 的 `metadata.version`、两个 CHANGELOG 的版本段，四处必须相同
 - 扩展改动：`npm install && npm run package`，检查 `youarehere-<version>.vsix` 的文件清单，`skills/` 与 `AGENTS.md` 都不应出现
+- 扩展逻辑改动：另用 stub 的 `vscode` 模块跑一遍 `activate`，检查 `context.json` 与 `ref.json` 的字段、以及版本提示是否只在每个扩展版本触发一次。stub 需要覆盖 `window`、`workspace`、`env.clipboard`，`globalState` 用 Map 模拟，`os.homedir` 指向临时目录以免写到真实状态文件
 - skill 改动：`skills-ref validate` 加真实安装一次
 - 文档改动：核对示例与实现一致，核对链接能打开
 - 发布流程（两个市场、token、发布命令）见 README 的「开发」一节里的「发布」，这里不重复

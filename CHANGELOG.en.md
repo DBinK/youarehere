@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.0] - 2026-09-20
 
+### Added
+
+- Added `extensionVersion` to both state files, recording which extension build wrote them so a skill can tell when it is behind
+- Added a warning when the installed skills do not match the extension version, shown once per extension version, with a button that copies the update command
+- Added a version check section to both the `here` and `youarehere` skills: on a mismatch they ask for the skills to be updated before they read any code
+
 ### Changed
 
 - Changed `README.md` to the Chinese version and moved the English one to `README.en.md`, so the repository front page and the VS Code Marketplace listing are Chinese by default
