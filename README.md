@@ -34,6 +34,8 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
    `-g` 会装进检测到的每个受支持 Agent 的用户级 skills 目录；不加则装进当前项目。如果 `skills` 装不了，让 Agent 从 https://github.com/DBinK/youarehere 安装。
 
+   扩展与 skills 用同一个版本号。扩展更新后跑 `npx skills update`，让已装的 skills 跟上，否则 Agent 用的还是旧技能的行为。遇到 skill 改名的版本，要先用 `npx skills remove` 清掉旧名字，见 [CHANGELOG](CHANGELOG.md)。
+
 3. **让 Agent 读取选区**
 
    在 VS Code 里选中代码，把 `/here` 和问题一起发给 Agent。以 [Codex](https://github.com/openai/codex) 为例：

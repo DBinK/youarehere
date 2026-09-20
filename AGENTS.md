@@ -46,7 +46,7 @@
 - 改完先校验：`npx skills-ref validate ./skills/<name>`
 - 再真装一次确认名字派生正确：`npx skills add <仓库路径>`，本地路径即可，不必先推送
 - `skills/` 不进 VSIX（见 `.vscodeignore`），用户通过 `npx skills add DBinK/youarehere -g` 安装
-- 改名或删除 skill 属于对外破坏性变更：bump 版本，CHANGELOG 记 `**Breaking:**`，条目里给出重装和清理旧 skill 的命令
+- 改名或删除 skill 属于对外破坏性变更：bump 版本，CHANGELOG 记 `**Breaking:**`，并给出完整迁移序列。实测 `npx skills update` 不会清理改名后遗留的旧名字，旧技能会留在 Agent 的 skills 目录里继续触发，所以迁移序列必须写成先 `npx skills remove <旧名>` 再 `npx skills add DBinK/youarehere -g`
 
 ## 提交与 PR
 

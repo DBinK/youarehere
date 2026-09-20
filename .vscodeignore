@@ -9,6 +9,8 @@ dist/
 tmp/
 notes/
 AGENTS.md
+README.en.md
+CHANGELOG.en.md
 skills/
 .github/
 package-lock.json

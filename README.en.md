@@ -34,6 +34,8 @@ This extension writes the active file, cursor position and selection to a fixed 
 
    `-g` installs into the user-level skills directory of every supported Agent it detects. Omit it to install into the current project instead. If `skills` cannot install it, ask your Agent to install the skill from https://github.com/DBinK/youarehere.
 
+   The extension and the skills carry the same version number. After the extension updates, run `npx skills update` so the installed skills keep up; otherwise the Agent keeps the behavior of the older skill. For a release that renames a skill, remove the old name first with `npx skills remove`, as described in the [CHANGELOG](CHANGELOG.en.md).
+
 3. **Point the Agent at the selection**
 
    Select code in VS Code, then pass `/here` and the question to the Agent. With [Codex](https://github.com/openai/codex):

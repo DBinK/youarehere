@@ -13,7 +13,7 @@
 ### Changed
 
 - 把 `README.md` 换成中文版，英文移到 `README.en.md`，仓库首页与 VS Code 市场页面因此默认显示中文
-- **Breaking:** 把 `youarehere` 技能改名为 `here`，`youarehere-full` 技能改名为 `youarehere`，现在 `youarehere` 指的是自动触发的那个技能。`/youarehere` 原本用于读取当前选区处的代码，`/youarehere-full` 读完整状态，改名后两者分别是 `/here` 与 `/youarehere`。用 `npx skills add DBinK/youarehere -g` 重装，并移除旧的 `youarehere-full`，否则两个技能同名并存
+- **Breaking:** 把 `youarehere` 技能改名为 `here`，`youarehere-full` 技能改名为 `youarehere`，现在 `youarehere` 指的是自动触发的那个技能。`/youarehere` 原本用于读取当前选区处的代码，`/youarehere-full` 读完整状态，改名后两者分别是 `/here` 与 `/youarehere`。迁移要两步：先 `npx skills remove youarehere youarehere-full` 清掉旧名字，再 `npx skills add DBinK/youarehere -g` 装回来。只跑 `npx skills update` 不够，它不会清理改名后遗留的 `youarehere-full`，那个旧技能会留在目录里继续自动触发
 
 ### Fixed
 
