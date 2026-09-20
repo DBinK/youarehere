@@ -2,7 +2,7 @@
   "name": "youarehere",
   "displayName": "You Are Here - IDE Selection to Your CLI Agent",
   "description": "A VS Code extension that hands your IDE selection to your CLI Agent — file, cursor position and selection are written to a fixed path the Agent reads. No MCP server or client config needed.",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "publisher": "DBinK",
   "license": "MIT",
   "icon": "images/here.png",
