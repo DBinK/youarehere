@@ -36,10 +36,10 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
 3. **让 Agent 读取选区**
 
-   在 VS Code 里选中代码，把 `/youarehere` 和问题一起发给 Agent。以 [Codex](https://github.com/openai/codex) 为例：
+   在 VS Code 里选中代码，把 `/here` 和问题一起发给 Agent。以 [Codex](https://github.com/openai/codex) 为例：
 
    ```text
-   > /youarehere 这个循环为什么跳过最后一个元素？
+   > /here 这个循环为什么跳过最后一个元素？
 
      读了 src/parser.ts:42-58。循环上界是 `i < len - 1`，
      所以最后一个元素永远访问不到。
@@ -51,10 +51,10 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
 | Skill | 调用方式 | 行为 |
 | --- | --- | --- |
-| `youarehere` | 仅 `/youarehere` | 读取选区处的代码，然后作答 |
-| `youarehere-full` | 自动触发，或 `/youarehere-full` | 完整状态，以及怎么读它 |
+| `here` | 仅 `/here` | 读取选区处的代码，然后作答 |
+| `youarehere` | 自动触发，或 `/youarehere` | 完整状态，以及怎么读它 |
 
-`youarehere` 只在按名字调用时运行，用来让 Agent 直接看你选中的代码。
+`here` 只在按名字调用时运行，用来让 Agent 直接看你选中的代码。
 
 ## 上下文文件
 
@@ -78,7 +78,7 @@ AI 编程 Agent 能读项目里的任何文件，却不知道你当前打开的�
 
 ### `~/.youarehere/context.json`
 
-完整状态。需要的信息比一个引用更多时读它，`youarehere-full` 用的就是这个。
+完整状态。需要的信息比一个引用更多时读它，`youarehere` 用的就是这个。
 
 ```json
 {

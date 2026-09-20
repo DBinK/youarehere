@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** Renamed the `youarehere` skill to `here` and the `youarehere-full` skill to `youarehere`, so `youarehere` now names the auto-triggering skill. `/youarehere` used to point the Agent at the current selection and `/youarehere-full` held the full state; after the rename those are `/here` and `/youarehere`. Reinstall with `npx skills add DBinK/youarehere -g` and remove the stale `youarehere-full`, otherwise two skills claim the same name
+
 ## [0.2.0] - 2026-09-18
 
 ### Added

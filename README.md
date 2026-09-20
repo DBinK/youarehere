@@ -36,10 +36,10 @@ This extension writes the active file, cursor position and selection to a fixed 
 
 3. **Point the Agent at the selection**
 
-   Select code in VS Code, then pass `/youarehere` and the question to the Agent. With [Codex](https://github.com/openai/codex):
+   Select code in VS Code, then pass `/here` and the question to the Agent. With [Codex](https://github.com/openai/codex):
 
    ```text
-   > /youarehere why does this loop skip the last element?
+   > /here why does this loop skip the last element?
 
      Reading src/parser.ts:42-58. The loop is bounded by `i < len - 1`,
      so the last element is never visited.
@@ -51,10 +51,10 @@ This extension writes the active file, cursor position and selection to a fixed 
 
 | Skill | Invocation | What it does |
 | --- | --- | --- |
-| `youarehere` | `/youarehere` only | reads the code at the selection, then answers |
-| `youarehere-full` | automatic, or `/youarehere-full` | the full state below, plus how to read it |
+| `here` | `/here` only | reads the code at the selection, then answers |
+| `youarehere` | automatic, or `/youarehere` | the full state below, plus how to read it |
 
-`youarehere` runs only when invoked by name. Use it to point the Agent at the current selection.
+`here` runs only when invoked by name. Use it to point the Agent at the current selection.
 
 ## Context Files
 
@@ -78,7 +78,7 @@ The smallest useful view: a single reference, enough for an Agent to locate the 
 
 ### `~/.youarehere/context.json`
 
-The full state, for readers that need more than a reference. This is what `youarehere-full` reads.
+The full state, for readers that need more than a reference. This is what `youarehere` reads.
 
 ```json
 {
