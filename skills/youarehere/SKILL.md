@@ -1,6 +1,11 @@
 ---
 name: youarehere
 description: Read the code the user is currently looking at in VS Code. Use when the user refers to "this code", "here", "what I've selected", "the current file", "at the cursor", or "what I'm looking at", or asks a code question without naming a location (and they're likely looking at code). Do not use when the user has already given a file path or pasted the code.
+license: MIT
+compatibility: Requires the youarehere VS Code extension (VS Code 1.90 or later) running on the same machine. It writes ~/.youarehere/context.json with schema youarehere/v1.
+metadata:
+  author: DBinK
+  version: "0.3.0"
 ---
 
 # Read the current VS Code selection

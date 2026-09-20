@@ -1,6 +1,11 @@
 ---
 name: here
 description: Read the user's current position in VS Code (file + line range), then read that code. Only invoke when the user explicitly types /here — do not trigger it from conversation context.
+license: MIT
+compatibility: Requires the youarehere VS Code extension (VS Code 1.90 or later) running on the same machine. It writes ~/.youarehere/ref.json.
+metadata:
+  author: DBinK
+  version: "0.3.0"
 ---
 
 # Output the VS Code selection reference

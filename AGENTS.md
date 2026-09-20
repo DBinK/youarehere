@@ -5,7 +5,9 @@
 ## 合入 main 前 bump 版本号
 
 - 任何改动交付物的 PR，都要在合入 main 之前 bump 版本，不要留到合并之后补
-- `package.json` 与 `package-lock.json` 一起改，用 `npm version <x.y.z> --no-git-tag-version`，避免顺手打出 tag
+- 要改的是四个地方：`package.json`、`package-lock.json`，以及两个 `skills/*/SKILL.md` 的 `metadata.version`
+- 技能版本跟随扩展版本，不单独编号。`metadata.version` 必须与 `package.json` 一致，bump 时一起改，不要只改一边
+- 前两个文件用 `npm version <x.y.z> --no-git-tag-version` 改，避免顺手打出 tag
 - 版本号按 semver。当前处于 0.x：
   - 破坏性变更（skill 改名或删除、状态文件路径或 schema 变化）→ minor，例如 0.2.1 → 0.3.0
   - 修复、重构、文档 → patch
@@ -24,6 +26,13 @@
 
 - 位置 `skills/<name>/SKILL.md`，遵循 Agent Skills 格式
 - frontmatter 的 `name` 必须与目录名完全一致，只能用小写字母、数字、连字符
+- frontmatter 字段固定这几项，与仓库现状保持一致：
+  - `description`：写清做什么、什么时候用，这是触发机制，改它要谨慎
+  - `license: MIT`
+  - `compatibility`：写清技能的前提，即本机运行 youarehere VS Code 扩展，并写明最低 VS Code 版本
+  - `metadata.author: DBinK`
+  - `metadata.version`：跟随扩展版本，与 `package.json` 相同
+- 不用 `allowed-tools`：规范标注为 experimental，各客户端解释不一致
 - 改完先校验：`npx skills-ref validate ./skills/<name>`
 - 再真装一次确认名字派生正确：`npx skills add <仓库路径>`，本地路径即可，不必先推送
 - `skills/` 不进 VSIX（见 `.vscodeignore`），用户通过 `npx skills add DBinK/youarehere -g` 安装
@@ -38,6 +47,7 @@
 
 ## 验证
 
+- 版本一致性：每次 bump 后核对 `package.json` 与两个 `SKILL.md` 的 `metadata.version`，三处必须相同
 - 扩展改动：`npm install && npm run package`，检查 `youarehere-<version>.vsix` 的文件清单，`skills/` 与 `AGENTS.md` 都不应出现
 - skill 改动：`skills-ref validate` 加真实安装一次
 - 文档改动：核对示例与实现一致，核对链接能打开
