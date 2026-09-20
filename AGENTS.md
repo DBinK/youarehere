@@ -5,8 +5,9 @@
 ## 语言
 
 - 沟通、提交信息、PR 描述、CHANGELOG 条目用什么语言，跟随开发者当前使用的语言，不硬性规定中文或英文
-- 仓库 README 以中文为默认：`README.md` 是中文，也是 VS Code 市场页面显示的那份，英文在 `README.en.md`，两份顶部互链
-- 改 README 时两份一起改，不要只改一种语言
+- 仓库 README 与 CHANGELOG 都以中文为默认，英文分别是 `README.en.md` 与 `CHANGELOG.en.md`，两份顶部互链
+- `README.md` 与 `CHANGELOG.md` 也是 VS Code 市场页面与 Changelog 标签显示的那两份
+- 改其中一份时另一份一起改，不要只改一种语言
 
 ## 合入 main 前 bump 版本号
 
@@ -19,13 +20,16 @@
   - 修复、重构、文档 → patch
 - skill 不在 VSIX 里，改 skill 不改变扩展产物，但版本号照样 bump。skill 是仓库交付给用户的接口
 
-## CHANGELOG.md
+## CHANGELOG
 
-- 用 Keep a Changelog 的分类：`Added`、`Changed`、`Fixed`、`Removed`
+- 两份文件：`CHANGELOG.md` 是中文，`CHANGELOG.en.md` 是英文，两份顶部互链
+- 改一份必须同步另一份，不要留译文落后
+- `CHANGELOG.md` 这个名字不能改，vsce 只认它，市场页面的 Changelog 标签读的就是它
+- 六类标题两份都保留 Keep a Changelog 的英文写法：`Added`、`Changed`、`Fixed`、`Removed`、`Deprecated`、`Security`。只翻译条目正文
+- 中文条目以「新增」「变更」「修复」「移除」这类动词开头，英文条目以过去式动词开头
 - 平时把改动写进 `[Unreleased]`。bump 版本时落成 `## [x.y.z] - YYYY-MM-DD`，并在顶部留一个空的 `[Unreleased]`
-- 破坏性条目以 `**Breaking:**` 开头，写清用户要做什么，例如重装 skill、删掉旧名字
-- 每条以过去式动词开头，写用户能观察到的行为，不写内部实现
-- 底部比较链接同步维护。`[Unreleased]` 指向上一个 tag 到 HEAD，每个已发布版本都有对照链接
+- 破坏性条目以 `**Breaking:**` 开头，两份写法相同，写清用户要做什么，例如重装 skill、删掉旧名字
+- 底部比较链接两份同步维护。`[Unreleased]` 指向上一个 tag 到 HEAD，每个已发布版本都有对照链接
 - 每个发布版本都要有对应 tag。tag 缺失时链接就是 404，不要长期缺着
 
 ## skills/
@@ -53,7 +57,7 @@
 
 ## 验证
 
-- 版本一致性：每次 bump 后核对 `package.json` 与两个 `SKILL.md` 的 `metadata.version`，三处必须相同
+- 版本一致性：每次 bump 后核对 `package.json`、两个 `SKILL.md` 的 `metadata.version`、两个 CHANGELOG 的版本段，四处必须相同
 - 扩展改动：`npm install && npm run package`，检查 `youarehere-<version>.vsix` 的文件清单，`skills/` 与 `AGENTS.md` 都不应出现
 - skill 改动：`skills-ref validate` 加真实安装一次
 - 文档改动：核对示例与实现一致，核对链接能打开

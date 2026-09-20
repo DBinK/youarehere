@@ -1,9 +1,10 @@
-# Changelog
+# 更新日志
 
-All notable changes to this project are documented in this file.
+本项目所有值得记录的变更都写在这里。
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+格式遵循 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)，版本号遵循[语义化版本](https://semver.org/spec/v2.0.0.html)。
+
+**简体中文** | [English](CHANGELOG.en.md)
 
 ## [Unreleased]
 
@@ -11,56 +12,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Changed `README.md` to the Chinese version and moved the English one to `README.en.md`, so the repository front page and the VS Code Marketplace listing are Chinese by default
-- **Breaking:** Renamed the `youarehere` skill to `here` and the `youarehere-full` skill to `youarehere`, so `youarehere` now names the auto-triggering skill. `/youarehere` used to point the Agent at the current selection and `/youarehere-full` held the full state; after the rename those are `/here` and `/youarehere`. Reinstall with `npx skills add DBinK/youarehere -g` and remove the stale `youarehere-full`, otherwise two skills claim the same name
+- 把 `README.md` 换成中文版，英文移到 `README.en.md`，仓库首页与 VS Code 市场页面因此默认显示中文
+- **Breaking:** 把 `youarehere` 技能改名为 `here`，`youarehere-full` 技能改名为 `youarehere`，现在 `youarehere` 指的是自动触发的那个技能。`/youarehere` 原本用于读取当前选区处的代码，`/youarehere-full` 读完整状态，改名后两者分别是 `/here` 与 `/youarehere`。用 `npx skills add DBinK/youarehere -g` 重装，并移除旧的 `youarehere-full`，否则两个技能同名并存
 
 ### Fixed
 
-- Fixed the `cursor` and `activeLineText` values in the `context.json` example in both READMEs, so the example agrees with the end-exclusive selection rule described below it
+- 修正两份 README 中 `context.json` 示例的 `cursor` 与 `activeLineText`，让示例与紧随其后的左闭右开选区规则一致
 
 ## [0.2.1] - 2026-09-18
 
 ### Added
 
-- Added the extension logo to both READMEs
+- 两份 README 都加上扩展 logo
 
 ## [0.2.0] - 2026-09-18
 
 ### Added
 
-- Added the end-exclusive coordinate rule to the `youarehere-full` skill, so a whole-line selection no longer makes the Agent read one line too many
-- Added a failure warning when the state file cannot be written (e.g. a read-only home directory), instead of failing extension activation
+- `youarehere-full` 技能补充左闭右开的坐标规则，整行选区不再让 Agent 多读一行
+- 状态文件写不进去时（例如 home 目录只读）给出提示，不再让扩展激活失败
 
 ### Changed
 
-- Changed the state file writes to atomic write-temp-then-rename, so a reader never sees a half-written `context.json` or `ref.json`
-- Changed the `skills/` directory to no longer ship inside the VSIX; skills are installed from the repository with `npx skills add`
-- Changed the marketplace listing to lead with `IDE Selection to Your CLI Agent`, with a matching description and keywords, and replaced the extension icon
+- 状态文件改为先写临时文件再重命名，读取方不会看到写了一半的 `context.json` 或 `ref.json`
+- `skills/` 目录不再随 VSIX 打包，技能改为从仓库用 `npx skills add` 安装
+- 市场文案改为以 `IDE Selection to Your CLI Agent` 打头，配套修改描述与关键词，并更换扩展图标
 
 ### Fixed
 
-- Fixed `ref.json` citing one line too many when a selection ends at the start of the following line
-- Fixed `isDirty` staying stale after saving the active file
-- Fixed leftover `.tmp` files accumulating in `~/.youarehere` when a state write failed midway
+- 修复选区结束于下一行行首时 `ref.json` 多引用一行的问题
+- 修复保存当前文件后 `isDirty` 仍为旧值的问题
+- 修复状态写入中途失败时在 `~/.youarehere` 残留 `.tmp` 文件的问题
 
 ## [0.1.0] - 2026-09-18
 
 ### Added
 
-- Added the extension that writes the active file, cursor position, and selection to `~/.youarehere/context.json`, so an Agent can tell where you are looking without being told
-- Added `~/.youarehere/ref.json`, a single-reference view for Agents that only need a `path:lines` cite
-- Added `isDirty` to both files, so a reader can tell when the buffer holds unsaved changes
-- Added the `youarehere` and `youarehere-full` skills, installable with `npx skills add DBinK/youarehere -g`
-- Added support for VS Code 1.90 and later
+- 新增扩展，把当前文件、光标位置与选区写入 `~/.youarehere/context.json`，Agent 不必再被手动告知你在看哪里
+- 新增 `~/.youarehere/ref.json`，给只需要 `path:lines` 引用的读取方一个精简视图
+- 两个文件都带 `isDirty`，读取方能判断缓冲区是否有未保存改动
+- 新增 `youarehere` 与 `youarehere-full` 两个技能，用 `npx skills add DBinK/youarehere -g` 安装
+- 支持 VS Code 1.90 及以上
 
 ### Changed
 
-- Renamed the extension from `active-context-mcp` to `youarehere`, with the publisher changing from `ysd` to `DBinK`
-- Moved the state file from `os.tmpdir()/active-context-mcp/active-context.json` to `~/.youarehere/context.json`
+- 扩展从 `active-context-mcp` 改名为 `youarehere`，发布者从 `ysd` 改为 `DBinK`
+- 状态文件从 `os.tmpdir()/active-context-mcp/active-context.json` 移到 `~/.youarehere/context.json`
 
 ### Removed
 
-- Removed the bundled MCP server. Agents read the state file directly through the bundled skills, so an MCP client entry is no longer needed
+- 移除内置的 MCP server。Agent 通过内置技能直接读状态文件，不再需要 MCP 客户端配置
 
 [Unreleased]: https://github.com/DBinK/youarehere/compare/v0.3.0...HEAD
 [0.3.0]: https://github.com/DBinK/youarehere/compare/v0.2.1...v0.3.0
