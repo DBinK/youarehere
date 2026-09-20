@@ -7,9 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-09-20
+
 ### Changed
 
 - **Breaking:** Renamed the `youarehere` skill to `here` and the `youarehere-full` skill to `youarehere`, so `youarehere` now names the auto-triggering skill. `/youarehere` used to point the Agent at the current selection and `/youarehere-full` held the full state; after the rename those are `/here` and `/youarehere`. Reinstall with `npx skills add DBinK/youarehere -g` and remove the stale `youarehere-full`, otherwise two skills claim the same name
+
+### Fixed
+
+- Fixed the `cursor` and `activeLineText` values in the `context.json` example in both READMEs, so the example agrees with the end-exclusive selection rule described below it
+
+## [0.2.1] - 2026-09-18
+
+### Added
+
+- Added the extension logo to `README.md` and `README.zh-CN.md`
 
 ## [0.2.0] - 2026-09-18
 
@@ -49,6 +61,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Removed the bundled MCP server. Agents read the state file directly through the bundled skills, so an MCP client entry is no longer needed
 
-[Unreleased]: https://github.com/DBinK/youarehere/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/DBinK/youarehere/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/DBinK/youarehere/compare/v0.2.1...v0.3.0
+[0.2.1]: https://github.com/DBinK/youarehere/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/DBinK/youarehere/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/DBinK/youarehere/releases/tag/v0.1.0
